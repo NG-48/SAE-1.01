@@ -68,8 +68,7 @@ public class SudokuBase {
      *  résultat :   un élément de cet ensemble
      */
     public static int uneValeur(boolean[] ens){
-        int i=0;
-        for (;!ens[i]; i++){
+        for (int i=0;!ens[i]; i++){
 
         }
         return i+1;
