@@ -1,5 +1,6 @@
 import java.util.*;
 import java.lang.*;
+import java.util.Scanner;
 
 public class SudokuBase {
 
@@ -13,10 +14,12 @@ public class SudokuBase {
      */
     public static int saisirEntierMinMax(int min, int max){
         int saisi;
-        do{
-            System.out.println("veuillez saisir un entier compris entre "+min+" et "+max);
+        System.out.println("veuillez saisir un entier compris entre "+min+" et "+max);
+        saisi = Ut.saisirEntier();
+        while (saisi<min || saisi>max){
+            System.out.println("veuillez resaisir un entier valide compris entre "+min+" et "+max);
             saisi = Ut.saisirEntier();
-        }while (saisi<min || saisi>max);
+        }
         return saisi;
     }  // fin saisirEntierMinMax
     //.........................................................................
@@ -27,9 +30,13 @@ public class SudokuBase {
      *
      */
     public static int [][] copieMatrice(int [][] mat){
-        //________________________________________________________
-
-        return mat;
+        int[][] tab=new int[mat.length][mat[0].length];
+        for(int i=0;i<mat.length;i++){
+            for (int j=0;j<mat[0].length;j++){
+                tab[i][j]=mat[i][j];
+            }
+        }
+        return tab;
     }  // fin copieMatrice
 
     //.........................................................................
@@ -40,9 +47,7 @@ public class SudokuBase {
      *             de 1 à n égal à lui-même
      */
     public static boolean[] ensPlein(int n){
-        //_____________________________________
-
-        return new boolean[0];
+      return new boolean[n];
     }  // fin ensPlein
 
     //.........................................................................
@@ -53,9 +58,7 @@ public class SudokuBase {
      *  résultat :   vrai ssi val était dans cet ensemble
      */
     public static boolean supprime(boolean[] ens, int val){
-        //______________________________________________________
-
-        return false;
+        return ens[val-1];
     }  // fin supprime
 
     //.........................................................................
@@ -65,9 +68,11 @@ public class SudokuBase {
      *  résultat :   un élément de cet ensemble
      */
     public static int uneValeur(boolean[] ens){
-        //_____________________________________________
+        int i=0;
+        for (;!ens[i]; i++){
 
-        return 0;
+        }
+        return i+1;
     }  // fin uneValeur
 
     //.........................................................................
@@ -114,9 +119,36 @@ public class SudokuBase {
      *
      */
     public static void afficheGrille(int k,int[][] g){
-        //__________________________________________________
+        System.out.print("   ");
+        for(int a=1; a<=k*k;a++){
+                System.out.print(a+" ");
+        }
+        System.out.println("");
+        for(int b=0 ; b<2*k*k+3 ; b++ ){
+            System.out.print("-");
+        }
+        System.out.println("");
+        // affichage des 2 premieres lignes
+        for(int ligne=0;ligne<k*k;ligne++){
+            System.out.print((ligne+1)+" /");
+            for (int colonne=0;colonne<k*k;colonne++){
+                if((colonne+1)%k==0){
+                    System.out.print(g[ligne][colonne]+"/");
+                }else{
+                    System.out.print(g[ligne][colonne]+" ");
+                }
+            }
+            System.out.println("");
+            if((ligne+1)%k==0){
+                for(int b=0 ; b<2*k*k+3 ; b++ ){
+                    System.out.print("-");
+                }
+                System.out.println("");
+            }
+        }
 
-    } // fin afficheGrille
+    }
+    // fin afficheGrille
     //.........................................................................
 
     /** pré-requis : k > 0, 0 <= i< k^2 et 0 <= j < k^2
@@ -125,11 +157,11 @@ public class SudokuBase {
      *             du sous-carré de la grille contenant cette case.
      *  Par exemple, si k=3, i=5 et j=7, la fonction retourne (3,6).
      */
-    public static int[] debCarre(int k,int i,int j){
+    /*public static int[] debCarre(int k,int i,int j){
         //__________________________________________________
 
         return new int[0];
-    }  // fin debCarre
+    } */ // fin debCarre
 
 
     //.........................................................................
@@ -143,9 +175,19 @@ public class SudokuBase {
      *  stratégie :  les valeurs sont données dans le code
      */
     public static int [][] initGrilleComplete(){
-        //_________________________________________________
+        int[][] matrice = {
+                {6, 2, 9, 7, 8, 1, 3, 4, 5},
+                {4, 7, 3, 9, 6, 5, 8, 1, 2},
+                {8, 1, 5, 2, 4, 3, 6, 9, 7},
+                {9, 5, 8, 3, 1, 2, 4, 7, 6},
+                {7, 3, 2, 4, 5, 6, 1, 8, 9},
+                {1, 6, 4, 8, 7, 9, 2, 5, 3},
+                {3, 8, 1, 5, 2, 7, 9, 6, 4},
+                {5, 9, 6, 1, 3, 4, 7, 2, 8},
+                {2, 4, 7, 6, 9, 8, 5, 3, 1}
+        };
 
-        return new int[0][];
+        return matrice;
     } // fin initGrilleComplete
 
     //.........................................................................
@@ -156,10 +198,18 @@ public class SudokuBase {
      *               et ayant nbTrous trous à des positions aléatoires
      */
     public static int [][] initGrilleIncomplete(int nbTrous, int [][] gSecret){
-        //___________________________________________________________________________
+        int[][] mat= copieMatrice(gSecret);
+        while (nbTrous!=0){
+            int ligne = Ut.randomMinMax(0,8);
+            int colonne = Ut.randomMinMax(0,8);
+            if (mat[ligne][colonne]!=0){
+                mat[ligne][colonne]=0;
+                nbTrous--;
+            }
+        }
 
 
-        return gSecret;
+        return mat;
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -172,11 +222,11 @@ public class SudokuBase {
      *               On suppose dans la version de base que la grille saisie est bien une grille de Sudoku incomplète.
      *  stratégie : utilise la fonction saisirEntierMinMax
      */
-    public static int [][] saisirGrilleIncomplete(int nbTrous){
+    /*public static int [][] saisirGrilleIncomplete(int nbTrous){
         //_________________________________________________
 
         return new int[0][];
-    }  // fin saisirGrilleIncomplete
+    } */ // fin saisirGrilleIncomplete
 
     //.........................................................................
 
@@ -188,10 +238,10 @@ public class SudokuBase {
      *  action : met dans valPossibles l'ensemble des entiers de 1 à 9 pour chaque trou de gOrdi
      *           et leur nombre dans nbValPoss
      */
-    public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
+    /*public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
         //________________________________________________________________________________________________
 
-    }  // fin initPleines
+    }*/  // fin initPleines
 
     //.........................................................................
 
@@ -203,10 +253,10 @@ public class SudokuBase {
      *  action : supprime dans les matrices valPossibles et nbValPoss la valeur gOrdi[i][j] pour chaque case de la ligne,
      *           de la colonne et du carré contenant la case (i,j) correspondant à un trou de gOrdi.
      */
-    public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
+    /*public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
         //_____________________________________________________________________________________________________________
 
-    }  // fin suppValPoss
+    } */ // fin suppValPoss
 
 
     //.........................................................................
@@ -217,10 +267,10 @@ public class SudokuBase {
      * action :      met dans valPossibles l'ensemble des valeurs possibles de chaque trou de gOrdi
      *               et leur nombre dans nbValPoss
      */
-    public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+    /*public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         //________________________________________________________________________________________________
 
-    }  // fin initPossibles
+    } */ // fin initPossibles
 
     //.........................................................................
 
@@ -236,12 +286,12 @@ public class SudokuBase {
      *               et leur nombre dans nbValPoss.
      * retour : la valeur de nbTrous
      */
-    public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
+    /*public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
                                  boolean[][][] valPossibles, int [][]nbValPoss){
         //______________________________________________________________________________________________
 
         return 0;
-    }  // fin initPartie
+    } */ // fin initPartie
 
     //...........................................................
     // Tour du joueur humain
@@ -254,11 +304,11 @@ public class SudokuBase {
      *
      *  action :     effectue un tour du joueur humain
      */
-    public static int tourHumain(int [][] gSecret, int [][] gHumain){
+    /*public static int tourHumain(int [][] gSecret, int [][] gHumain){
         //___________________________________________________________________
 
         return 0;
-    }  // fin  tourHumain
+    } */ // fin  tourHumain
 
     //.........................................................................
 
@@ -271,11 +321,11 @@ public class SudokuBase {
      *                s'il y en a, sinon le premier trou de gOrdi dans l'ordre des lignes
      *
      */
-    public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
+    /*public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
         //___________________________________________________________________
 
         return new int[0];
-    }  // fin chercheTrou
+    } */ // fin chercheTrou
 
     //.........................................................................
 
@@ -284,11 +334,11 @@ public class SudokuBase {
      *               et nbValPoss est une matrice 9x9 d'entiers
      *  action :     effectue un tour de l'ordinateur
      */
-    public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+    /*public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         //________________________________________________________________________________________________
 
         return 0;
-    }  // fin tourOrdinateur
+    } */ // fin tourOrdinateur
 
     //.........................................................................
 
@@ -301,11 +351,11 @@ public class SudokuBase {
      *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
      *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
      */
-    public static int partie(){
+    /*public static int partie(){
 
         return 0;
     }  // fin partie
-
+    */
 
     //.........................................................................
 
@@ -314,11 +364,9 @@ public class SudokuBase {
      *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
      *               et affiche qui a gagné
      */
-    public static void main(String[] args){
-        System.out.println(saisirEntierMinMax(1,9));
+    /*public static void main(String[] args){
 
-    }  // fin main
-
+    }*/  // fin main
 } // fin SudokuBase
 
 
