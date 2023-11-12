@@ -221,11 +221,27 @@ public class SudokuBase {
      *               On suppose dans la version de base que la grille saisie est bien une grille de Sudoku incomplète.
      *  stratégie : utilise la fonction saisirEntierMinMax
      */
-    /*public static int [][] saisirGrilleIncomplete(int nbTrous){
-        //_________________________________________________
+    public static int [][] saisirGrilleIncomplete(int nbTrous){
+        int[][] grille= new int[9][9];
+        int nbTrousSaisi;
+        do{
+           nbTrousSaisi = 0;
+            for (int ligne=0;ligne<9;ligne++){
+                for (int colonne=0;colonne<9;colonne++){
+                    int saisi = saisirEntierMinMax(0,9);
+                    grille[ligne][colonne] = saisi;
+                    if(saisi==0){
+                        nbTrousSaisi++;
+                    }
+                }
+            }
+            if (nbTrousSaisi!=nbTrous){
+                System.err.println("un mauvais nombre de trous a été saisi, veuillez ressaisir la grille.");
+            }
 
-        return new int[0][];
-    } */ // fin saisirGrilleIncomplete
+        }while (nbTrous!=nbTrousSaisi);
+        return grille;
+    } // fin saisirGrilleIncomplete
 
     //.........................................................................
 
@@ -237,10 +253,21 @@ public class SudokuBase {
      *  action : met dans valPossibles l'ensemble des entiers de 1 à 9 pour chaque trou de gOrdi
      *           et leur nombre dans nbValPoss
      */
-    /*public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
-        //________________________________________________________________________________________________
-
-    }*/  // fin initPleines
+    public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
+        for (int ligne=0;ligne<gOrdi.length;ligne++){
+            for (int colonne=0;colonne<gOrdi[0].length;colonne++){
+                for (int nb=1;nb<valPossibles[0][0].length;nb++){
+                    if(nb!=gOrdi[ligne][colonne]){
+                        valPossibles[ligne][colonne][nb]=false;
+                    }
+                    else {
+                        valPossibles[ligne][colonne][nb]=true;
+                    }
+                }
+                nbValPoss[ligne][colonne] = gOrdi[ligne][colonne];
+            }
+        }
+    }  // fin initPleines
 
     //.........................................................................
 
