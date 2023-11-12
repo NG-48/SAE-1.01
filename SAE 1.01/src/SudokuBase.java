@@ -400,7 +400,18 @@ public class SudokuBase {
      *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
      *               et affiche qui a gagné
      */
-    /*public static void main(String[] args){
+    public static void main(String[] args){
+    	int gagnant=0;
+	gagnant=partie();
+	if (gagnant==0){
+	    Ut.afficherSL("C'est un match nul !");
+	}
+	else if(gagnant==1){
+	    Ut.afficherSL("Le gagnant est le joueur humain !");
+	}
+	else{
+	    Ut.afficherSL("Le gagnant est l'ordinateur !");
+	}
 
     }*/  // fin main
 } // fin SudokuBase
