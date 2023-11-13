@@ -401,8 +401,7 @@ public class SudokuBase {
      *               et affiche qui a gagné
      */
     public static void main(String[] args){
-    	int gagnant=0;
-	gagnant=partie();
+	int gagnant=partie();
 	if (gagnant==0){
 	    Ut.afficherSL("C'est un match nul !");
 	}
@@ -413,7 +412,7 @@ public class SudokuBase {
 	    Ut.afficherSL("Le gagnant est l'ordinateur !");
 	}
 
-    }*/  // fin main
+    }  // fin main
 } // fin SudokuBase
 
 
