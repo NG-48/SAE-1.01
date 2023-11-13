@@ -69,7 +69,6 @@ public class SudokuBase {
      */
     public static int uneValeur(boolean[] ens){
         for (int i=0;!ens[i]; i++){
-
         }
         return i+1;
     }  // fin uneValeur
@@ -312,17 +311,15 @@ public class SudokuBase {
      *               et leur nombre dans nbValPoss.
      * retour : la valeur de nbTrous
      */
-    /*public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
+    public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
                                  boolean[][][] valPossibles, int [][]nbValPoss){
-        //______________________________________________________________________________________________
-
 	int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
 	while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
 	    Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
 	    nbTrous=Ut.saisirEntier();
 	}
 	gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
-	gHumain=initGrilleIncomplète(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
+	gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
 	gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
 	/* à finir valPossibles */
 	
