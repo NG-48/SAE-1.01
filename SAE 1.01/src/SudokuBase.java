@@ -17,7 +17,7 @@ public class SudokuBase {
         System.out.println("veuillez saisir un entier compris entre "+min+" et "+max);
         saisi = Ut.saisirEntier();
         while (saisi<min || saisi>max){
-            System.out.println("veuillez resaisir un entier valide compris entre "+min+" et "+max);
+            System.err.println("veuillez resaisir un entier valide compris entre "+min+" et "+max);
             saisi = Ut.saisirEntier();
         }
         return saisi;
@@ -47,7 +47,7 @@ public class SudokuBase {
      *             de 1 à n égal à lui-même
      */
     public static boolean[] ensPlein(int n){
-      return new boolean[n];
+        return new boolean[n];
     }  // fin ensPlein
 
     //.........................................................................
@@ -58,7 +58,11 @@ public class SudokuBase {
      *  résultat :   vrai ssi val était dans cet ensemble
      */
     public static boolean supprime(boolean[] ens, int val){
-        return ens[val-1];
+        if(ens[val]){
+            ens[val]=false;
+            return true;
+        }
+        return false;
     }  // fin supprime
 
     //.........................................................................
@@ -68,7 +72,8 @@ public class SudokuBase {
      *  résultat :   un élément de cet ensemble
      */
     public static int uneValeur(boolean[] ens){
-        for (int i=0;!ens[i]; i++){
+        int i;
+        for (i=0;!ens[i]; i++){
         }
         return i+1;
     }  // fin uneValeur
@@ -119,19 +124,19 @@ public class SudokuBase {
     public static void afficheGrille(int k,int[][] g){
         System.out.print("   ");
         for(int a=1; a<=k*k;a++){
-                System.out.print(a+" ");
+            System.out.print(a+" ");
         }
         System.out.println("");
         for(int b=0 ; b<2*k*k+3 ; b++ ){
             System.out.print("-");
         }
         System.out.println("");
-        // affichage des 2 premieres lignes
+        // affichage des 2 premieres lignes finit
         for(int ligne=0;ligne<k*k;ligne++){
-            System.out.print((ligne+1)+" /");
+            System.out.print((ligne+1)+" |");
             for (int colonne=0;colonne<k*k;colonne++){
                 if((colonne+1)%k==0){
-                    System.out.print(g[ligne][colonne]+"/");
+                    System.out.print(g[ligne][colonne]+"|");
                 }else{
                     System.out.print(g[ligne][colonne]+" ");
                 }
@@ -173,7 +178,7 @@ public class SudokuBase {
      *  stratégie :  les valeurs sont données dans le code
      */
     public static int [][] initGrilleComplete(){
-        int[][] matrice = {
+        return new int[][] {
                 {6, 2, 9, 7, 8, 1, 3, 4, 5},
                 {4, 7, 3, 9, 6, 5, 8, 1, 2},
                 {8, 1, 5, 2, 4, 3, 6, 9, 7},
@@ -185,7 +190,6 @@ public class SudokuBase {
                 {2, 4, 7, 6, 9, 8, 5, 3, 1}
         };
 
-        return matrice;
     } // fin initGrilleComplete
 
     //.........................................................................
@@ -224,7 +228,7 @@ public class SudokuBase {
         int[][] grille= new int[9][9];
         int nbTrousSaisi;
         do{
-           nbTrousSaisi = 0;
+            nbTrousSaisi = 0;
             for (int ligne=0;ligne<9;ligne++){
                 for (int colonne=0;colonne<9;colonne++){
                     int saisi = saisirEntierMinMax(0,9);
@@ -256,14 +260,9 @@ public class SudokuBase {
         for (int ligne=0;ligne<gOrdi.length;ligne++){
             for (int colonne=0;colonne<gOrdi[0].length;colonne++){
                 for (int nb=1;nb<valPossibles[0][0].length;nb++){
-                    if(nb!=gOrdi[ligne][colonne]){
-                        valPossibles[ligne][colonne][nb]=false;
-                    }
-                    else {
-                        valPossibles[ligne][colonne][nb]=true;
-                    }
+                    valPossibles[ligne][colonne][nb]=true;
                 }
-                nbValPoss[ligne][colonne] = gOrdi[ligne][colonne];
+                nbValPoss[ligne][colonne] = 9;
             }
         }
     }  // fin initPleines
@@ -278,10 +277,21 @@ public class SudokuBase {
      *  action : supprime dans les matrices valPossibles et nbValPoss la valeur gOrdi[i][j] pour chaque case de la ligne,
      *           de la colonne et du carré contenant la case (i,j) correspondant à un trou de gOrdi.
      */
-    /*public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
-        //_____________________________________________________________________________________________________________
+    public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
+        // on commence par la ligne, puis la colonne puis le carre
+        for(int colonne=0; colonne<gOrdi[i].length;colonne++){
+            if(supprime(valPossibles[i][colonne],gOrdi[i][j])){
+                nbValPoss[i][colonne]--;
+            }
+        }
+        for(int ligne=0; ligne<gOrdi[i].length;ligne++){
+            if(supprime(valPossibles[ligne][j],gOrdi[i][j])){
+                nbValPoss[ligne][j]--;
+            }
+        }
 
-    } */ // fin suppValPoss
+
+    }  // fin suppValPoss
 
 
     //.........................................................................
@@ -313,18 +323,18 @@ public class SudokuBase {
      */
     public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
                                  boolean[][][] valPossibles, int [][]nbValPoss){
-	int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
-	while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
-	    Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
-	    nbTrous=Ut.saisirEntier();
-	}
-	gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
-	gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
-	gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
-	/* à finir valPossibles */
-	
+        int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
+        while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
+            Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
+            nbTrous=Ut.saisirEntier();
+        }
+        gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
+        gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
+        gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
+        /* à finir valPossibles */
+
         return nbTrous;
-    } */ // fin initPartie
+    } // fin initPartie
 
     //...........................................................
     // Tour du joueur humain
@@ -397,7 +407,7 @@ public class SudokuBase {
      *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
      *               et affiche qui a gagné
      */
-    public static void main(String[] args){
+    /*public static void main(String[] args){
 	int gagnant=partie();
 	if (gagnant==0){
 	    Ut.afficherSL("C'est un match nul !");
@@ -409,8 +419,6 @@ public class SudokuBase {
 	    Ut.afficherSL("Le gagnant est l'ordinateur !");
 	}
 
-    }  // fin main
+    }*/  // fin main
 } // fin SudokuBase
-
-
 
