@@ -357,6 +357,35 @@ public class SudokuBase {
      *  action :     effectue un tour du joueur humain
      */
     public static int tourHumain(int [][] gSecret, int [][] gHumain){
+        int malus=0;
+        int valeurSaisi;
+        afficheGrille(3,gHumain);
+            System.out.println("veuillez choisir la ligne du trou que vous souhaitez remplir");
+            int ligneSaisi = saisirEntierMinMax(1, 9) - 1;
+            System.out.println("veuillez choisir la colonne du trou que vous souhaitez remplir");
+            int colonneSaisi = saisirEntierMinMax(1, 9) - 1;
+        while(gHumain[ligneSaisi][colonneSaisi]!=0){
+            System.err.println("l'emplacement selectionnée n'est pas un trou! veuillez choisir un nouveau emplacement");
+            System.out.println("veuillez choisir la ligne du trou que vous souhaitez remplir");
+            ligneSaisi = saisirEntierMinMax(1, 9) - 1;
+            System.out.println("veuillez choisir la colonne du trou que vous souhaitez remplir");
+            colonneSaisi = saisirEntierMinMax(1, 9) - 1;
+        }
+        do{
+            System.out.println("\nveuillez saisir la valeur avec laquelle vous souhaitez remplacer le trou\nsinon saisissez le nombre 10 si vous souhaitez prendre un joker");
+            valeurSaisi=saisirEntierMinMax(1,10);
+            if(valeurSaisi==10){
+                gHumain[ligneSaisi][colonneSaisi]=gSecret[ligneSaisi][colonneSaisi];
+                System.out.println("la réponse correcte était : "+gSecret[ligneSaisi][colonneSaisi]);
+                return malus+1;
+            } else if (valeurSaisi==gSecret[ligneSaisi][colonneSaisi]){
+                System.out.println("c'est la réponse correcte!");
+                return malus;
+            }else {
+                System.out.println("mauvaise réponse , essaye encore");
+                malus++;
+            }
+        }while(valeurSaisi!=gSecret[ligneSaisi][colonneSaisi]);
 
 
         return 0;
