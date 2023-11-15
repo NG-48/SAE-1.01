@@ -313,16 +313,10 @@ public class SudokuBase {
      * action :      met dans valPossibles l'ensemble des valeurs possibles de chaque trou de gOrdi
      *               et leur nombre dans nbValPoss
      */
-    public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
-       for(int i=0;i<gOrdi.length;i++){
-	    for(int j=0;j<gOrdi.length;j++){
-		if(gOrdi[i][j]!=0){
-		    suppValPoss(gOrdi,i,j,valPossibles,nbValPoss);
-		}
-	    }
-	}
+    /*public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+        //________________________________________________________________________________________________
 
-    } // fin initPossibles
+    } */ // fin initPossibles
 
     //.........................................................................
 
@@ -340,7 +334,11 @@ public class SudokuBase {
      */
     public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
                                  boolean[][][] valPossibles, int [][]nbValPoss){
-	int nbTrous=saisirEntierMinMax(0,81);
+	int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
+	while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
+	    Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
+	    nbTrous=Ut.saisirEntier();
+	}
 	//gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
 	//gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
 	gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
@@ -377,11 +375,16 @@ public class SudokuBase {
      *                s'il y en a, sinon le premier trou de gOrdi dans l'ordre des lignes
      *
      */
-    /*public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
-        //___________________________________________________________________
-
+    public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
+        for(int ligne=0;ligne<9;ligne++){
+            for (int colonne=0; colonne<9;colonne++){
+                if(nbValPoss[ligne][colonne]==1){
+                    return new int[]{ligne,colonne};
+                }
+            }
+        }
         return new int[0];
-    } */ // fin chercheTrou
+    } // fin chercheTrou
 
     //.........................................................................
 
