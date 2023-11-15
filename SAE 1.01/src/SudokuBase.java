@@ -440,7 +440,7 @@ public class SudokuBase {
 	coor=chercheTrou(gOrdi,nbValPoss);
 	initPossibles(gOrdi,valPossibles,nbValPoss);
 	if (nbValPoss.length==1){
-	    gOrdi[coor[0]][coor[1]]=nbValPoss[0];
+	    gOrdi[coor[0]][coor[1]]=nbValPoss[0][0];
 	}
 	else{
 	    Ut.afficher("J'utilise un joker");
