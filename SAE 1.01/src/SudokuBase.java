@@ -434,11 +434,25 @@ public class SudokuBase {
      *               et nbValPoss est une matrice 9x9 d'entiers
      *  action :     effectue un tour de l'ordinateur
      */
-    /*public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
-        //________________________________________________________________________________________________
+    public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+        int malus=0;
+	int [] coor;
+	coor=chercheTrou(gOrdi,nbValPoss);
+	initPossibles(gOrdi,valPossibles,nbValPoss);
+	if (nbValPoss.length==1){
+	    gOrdi[coor[0]][coor[1]]=nbValPoss[0];
+	}
+	else{
+	    Ut.afficher("J'utilise un joker");
+	    afficheGrille(3,gOrdi);
+	    Ut.afficher("Donne moi le résultat pour le point de coordonné " + gOrdi[coor[0]+1][coor[1]+1]);
+	    int reponse=Ut.saisirEntier();
+	    gOrdi[coor[0]][coor[1]]=reponse;
+	    malus++;
+	}
 
         return 0;
-    } */ // fin tourOrdinateur
+    } // fin tourOrdinateur
 
     //.........................................................................
 
