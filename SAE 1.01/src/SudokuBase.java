@@ -313,10 +313,16 @@ public class SudokuBase {
      * action :      met dans valPossibles l'ensemble des valeurs possibles de chaque trou de gOrdi
      *               et leur nombre dans nbValPoss
      */
-    /*public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
-        //________________________________________________________________________________________________
+    public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
+       for(int i=0;i<gOrdi.length;i++){
+	    for(int j=0;j<gOrdi.length;j++){
+		if(gOrdi[i][j]!=0){
+		    suppValPoss(gOrdi,i,j,valPossibles,nbValPoss);
+		}
+	    }
+	}
 
-    } */ // fin initPossibles
+    } // fin initPossibles
 
     //.........................................................................
 
