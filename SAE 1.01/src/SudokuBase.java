@@ -129,10 +129,11 @@ public class SudokuBase {
                 System.out.print(a+" ");
         }
         System.out.println("");
+        String separateur ="";
         for(int b=0 ; b<2*k*k+3 ; b++ ){
-            System.out.print("-");
+            separateur += "-";
         }
-        System.out.println("");
+        System.out.println(separateur);
         // affichage des 2 premieres lignes finit
         for(int ligne=0;ligne<k*k;ligne++){
             System.out.print((ligne+1)+" |");
@@ -145,10 +146,7 @@ public class SudokuBase {
             }
             System.out.println("");
             if((ligne+1)%k==0){
-                for(int b=0 ; b<2*k*k+3 ; b++ ){
-                    System.out.print("-");
-                }
-                System.out.println("");
+                System.out.println(separateur);
             }
         }
 
@@ -163,9 +161,9 @@ public class SudokuBase {
      *  Par exemple, si k=3, i=5 et j=7, la fonction retourne (3,6).
      */
     public static int[] debCarre(int k,int i,int j){
-	int[] tab=new int[2];
-	tab[0]=i-i%k;
-	tab[1]=j-j%k;
+        int[] tab=new int[2];
+        tab[0]=i-i%k;
+        tab[1]=j-j%k;
         return tab;
     }// fin debCarre
 
@@ -291,7 +289,16 @@ public class SudokuBase {
                 nbValPoss[ligne][j]--;
             }
         }
-        int ligneCarre=
+        int[] tabCarre= debCarre(3,i,j);
+        int ligneCarre= tabCarre[0];
+        int colonneCarre= tabCarre[1];
+        for(int ligne=ligneCarre;ligne<ligneCarre+3;ligne++){
+            for (int colonne=colonneCarre; colonne<colonneCarre+3;colonne++){
+                if(supprime(valPossibles[ligne][j],gOrdi[i][j])){
+                    nbValPoss[ligne][j]--;
+                }
+            }
+        }
 
 
 
