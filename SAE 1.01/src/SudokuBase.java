@@ -334,11 +334,7 @@ public class SudokuBase {
      */
     public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
                                  boolean[][][] valPossibles, int [][]nbValPoss){
-	int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
-	while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
-	    Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
-	    nbTrous=Ut.saisirEntier();
-	}
+	int nbTrous=saisirEntierMinMax(0,81);
 	//gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
 	//gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
 	gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
