@@ -450,7 +450,27 @@ public class SudokuBase {
     /** pré-requis : aucun
      *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
      *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
-     */
+public static int partie(){
+        int[][] gSecret=new int[9][9];
+        int[][] gHumain=new int[9][9];
+        int[][] gOrdi=new int[9][9];
+        boolean[][][] valPossibles = new boolean[9][9][10];
+        int [][]nbValPoss = new int[9][9];
+        int nbTrous=initPartie(gSecret,gHumain,gOrdi,valPossibles,nbValPoss);
+        int pointHumain=0;
+        int pointOrdi=0;
+        for(;nbTrous>0;nbTrous--){
+            pointHumain+= tourHumain(gSecret,gHumain);
+            //pointOrdi+=tourOrdinateur(gOrdi,valPossibles,nbValPoss);
+        }
+        if(pointHumain<pointOrdi){
+            return 2;
+        } else if (pointHumain==pointOrdi) {
+            return 0;
+        }else {
+            return 1;
+        }
+    }  // fin partie     */
     /*public static int partie(){
 
         return 0;
@@ -464,7 +484,7 @@ public class SudokuBase {
      *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
      *               et affiche qui a gagné
      */
-    /*public static void main(String[] args){
+    public static void main(String[] args){
 	int gagnant=partie();
 	if (gagnant==0){
 	    Ut.afficherSL("C'est un match nul !");
@@ -476,7 +496,7 @@ public class SudokuBase {
 	    Ut.afficherSL("Le gagnant est l'ordinateur !");
 	}
 
-    }*/  // fin main
+    }  // fin main
 } // fin SudokuBase
 
 
