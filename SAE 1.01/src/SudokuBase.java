@@ -451,7 +451,7 @@ public class SudokuBase {
 	    malus++;
 	}
 
-        return 0;
+        return malus;
     } // fin tourOrdinateur
 
     //.........................................................................
