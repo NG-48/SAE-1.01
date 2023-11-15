@@ -294,7 +294,7 @@ public class SudokuBase {
         int colonneCarre= tabCarre[1];
         for(int ligne=ligneCarre;ligne<ligneCarre+3;ligne++){
             for (int colonne=colonneCarre; colonne<colonneCarre+3;colonne++){
-                if(supprime(valPossibles[ligne][j],gOrdi[i][j])){
+                if(supprime(valPossibles[ligne][colonne],gOrdi[i][j])){
                     nbValPoss[ligne][j]--;
                 }
             }
