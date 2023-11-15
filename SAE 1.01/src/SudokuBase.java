@@ -3,7 +3,7 @@ import java.lang.*;
 import java.util.Scanner;
 
 public class SudokuBase {
-
+    //test
     //.........................................................................
     // Fonctions utiles
     //.........................................................................
@@ -25,18 +25,16 @@ public class SudokuBase {
     //.........................................................................
 
 
-    /** pré-requis : aucun
-     *  résultat : une copie de mat
-     *
+    /** MODIFICI
+     *  pré-requis : mat1 et mat2 ont les mêmes dimensions
+     *  action : copie toutes les valeurs de mat1 dans mat2 de sorte que mat1 et mat2 soient identiques
      */
-    public static int [][] copieMatrice(int [][] mat){
-        int[][] tab=new int[mat.length][mat[0].length];
-        for(int i=0;i<mat.length;i++){
-            for (int j=0;j<mat[0].length;j++){
-                tab[i][j]=mat[i][j];
+    public static void copieMatrice(int[][] mat1, int[][] mat2){
+        for(int i=0;i<mat1.length;i++){
+            for (int j=0;j<mat1[0].length;j++){
+                mat2[i][j]=mat1[i][j];
             }
         }
-        return tab;
     }  // fin copieMatrice
 
     //.........................................................................
@@ -47,7 +45,11 @@ public class SudokuBase {
      *             de 1 à n égal à lui-même
      */
     public static boolean[] ensPlein(int n){
-        return new boolean[n];
+      boolean[] tab = new boolean[n+1];
+      for (int i=0;i<tab.length;i++){
+          tab[i]=true;
+      }
+      return tab;
     }  // fin ensPlein
 
     //.........................................................................
@@ -124,7 +126,7 @@ public class SudokuBase {
     public static void afficheGrille(int k,int[][] g){
         System.out.print("   ");
         for(int a=1; a<=k*k;a++){
-            System.out.print(a+" ");
+                System.out.print(a+" ");
         }
         System.out.println("");
         for(int b=0 ; b<2*k*k+3 ; b++ ){
@@ -160,18 +162,10 @@ public class SudokuBase {
      *             du sous-carré de la grille contenant cette case.
      *  Par exemple, si k=3, i=5 et j=7, la fonction retourne (3,6).
      */
-    public static int[] debCarre(int k,int i,int j){
-	int coor1=0;
-	int coor2=0;
-	int modi=i%k;
-	int modj=j%k;
-	coor1=i-modi;
-	coor2=j-modj;
-	int[] tab=new int[2];
-	tab[0]=coor1;
-	tab[1]=coor2;
-	
-        return tab;
+    /*public static int[] debCarre(int k,int i,int j){
+        //__________________________________________________
+
+        return new int[0];
     } */ // fin debCarre
 
 
@@ -181,12 +175,13 @@ public class SudokuBase {
     //.........................................................................
 
 
-    /** pré-requis : aucun
-     *  résultat :   une grille de Sudoku complète
-     *  stratégie :  les valeurs sont données dans le code
+    /** MODIFICI
+     *  pré-requis : gComplete est une matrice 9X9
+     *  action   :   remplit gComplete pour que la grille de Sudoku correspondante soit complète
+     *  stratégie :  les valeurs sont données directement dans le code et on peut utiliser copieMatrice pour mettre à jour gComplete
      */
-    public static int [][] initGrilleComplete(){
-        return new int[][] {
+    public static void initGrilleComplete(int [][] gComplete){
+        int[][] mat= {
                 {6, 2, 9, 7, 8, 1, 3, 4, 5},
                 {4, 7, 3, 9, 6, 5, 8, 1, 2},
                 {8, 1, 5, 2, 4, 3, 6, 9, 7},
@@ -197,29 +192,29 @@ public class SudokuBase {
                 {5, 9, 6, 1, 3, 4, 7, 2, 8},
                 {2, 4, 7, 6, 9, 8, 5, 3, 1}
         };
+        copieMatrice(mat,gComplete);
 
     } // fin initGrilleComplete
 
     //.........................................................................
 
 
-    /** pré-requis : gSecret est une grille de Sudoku complète et 0 <= nbTrous <= 81
-     *  résultat :   une grille de Sudoku incomplète pouvant être complétée en gSecret
-     *               et ayant nbTrous trous à des positions aléatoires
+    /** MODIFICI
+     *  pré-requis : gSecret est une grille de Sudoku complète de mêmes dimensions que gIncomplete et 0 <= nbTrous <= 81
+     *  action :     modifie gIncomplete pour qu'elle corresponde à une version incomplète de la grille de Sudoku gSecret (gIncomplete peut être complétée en gSecret),
+     *               avec nbTrous trous à des positions aléatoires
      */
-    public static int [][] initGrilleIncomplete(int nbTrous, int [][] gSecret){
-        int[][] mat= copieMatrice(gSecret);
+    public static void initGrilleIncomplete(int nbTrous, int [][] gSecret, int[][] gIncomplete){
+        copieMatrice(gSecret,gIncomplete);
         while (nbTrous!=0){
             int ligne = Ut.randomMinMax(0,8);
             int colonne = Ut.randomMinMax(0,8);
-            if (mat[ligne][colonne]!=0){
-                mat[ligne][colonne]=0;
+            if (gIncomplete[ligne][colonne]!=0){
+                gIncomplete[ligne][colonne]=0;
                 nbTrous--;
             }
         }
 
-
-        return mat;
     } // fin initGrilleIncomplete
 
     //.........................................................................
@@ -236,7 +231,7 @@ public class SudokuBase {
         int[][] grille= new int[9][9];
         int nbTrousSaisi;
         do{
-            nbTrousSaisi = 0;
+           nbTrousSaisi = 0;
             for (int ligne=0;ligne<9;ligne++){
                 for (int colonne=0;colonne<9;colonne++){
                     int saisi = saisirEntierMinMax(0,9);
@@ -267,9 +262,7 @@ public class SudokuBase {
     public static void initPleines(int [][] gOrdi, boolean[][][] valPossibles, int [][] nbValPoss){
         for (int ligne=0;ligne<gOrdi.length;ligne++){
             for (int colonne=0;colonne<gOrdi[0].length;colonne++){
-                for (int nb=1;nb<valPossibles[0][0].length;nb++){
-                    valPossibles[ligne][colonne][nb]=true;
-                }
+                valPossibles[ligne][colonne] = ensPlein(10);
                 nbValPoss[ligne][colonne] = 9;
             }
         }
@@ -297,6 +290,8 @@ public class SudokuBase {
                 nbValPoss[ligne][j]--;
             }
         }
+        int ligneCarre=
+
 
 
     }  // fin suppValPoss
@@ -331,16 +326,16 @@ public class SudokuBase {
      */
     public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
                                  boolean[][][] valPossibles, int [][]nbValPoss){
-        int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
-        while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
-            Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
-            nbTrous=Ut.saisirEntier();
-        }
-        gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
-        gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
-        gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
-        /* à finir valPossibles */
-
+	int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
+	while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
+	    Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
+	    nbTrous=Ut.saisirEntier();
+	}
+	//gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
+	//gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
+	gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
+	/* à finir valPossibles */
+	
         return nbTrous;
     } // fin initPartie
 
@@ -429,4 +424,6 @@ public class SudokuBase {
 
     }*/  // fin main
 } // fin SudokuBase
+
+
 
