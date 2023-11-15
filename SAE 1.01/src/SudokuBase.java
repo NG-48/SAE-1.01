@@ -14,7 +14,6 @@ public class SudokuBase {
      */
     public static int saisirEntierMinMax(int min, int max){
         int saisi;
-        System.out.println("veuillez saisir un entier compris entre "+min+" et "+max);
         saisi = Ut.saisirEntier();
         while (saisi<min || saisi>max){
             System.err.println("veuillez resaisir un entier valide compris entre "+min+" et "+max);
@@ -229,6 +228,7 @@ public class SudokuBase {
     public static int [][] saisirGrilleIncomplete(int nbTrous){
         int[][] grille= new int[9][9];
         int nbTrousSaisi;
+        System.out.println("veuillez saisir la grille");
         do{
            nbTrousSaisi = 0;
             for (int ligne=0;ligne<9;ligne++){
@@ -295,7 +295,7 @@ public class SudokuBase {
         for(int ligne=ligneCarre;ligne<ligneCarre+3;ligne++){
             for (int colonne=colonneCarre; colonne<colonneCarre+3;colonne++){
                 if(supprime(valPossibles[ligne][colonne],gOrdi[i][j])){
-                    nbValPoss[ligne][colonne]--;
+                    nbValPoss[ligne][j]--;
                 }
             }
         }
@@ -334,15 +334,13 @@ public class SudokuBase {
      */
     public static int initPartie(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
                                  boolean[][][] valPossibles, int [][]nbValPoss){
-	int nbTrous=-1; /*Valeur bidon pour que ça rentre dans la boucle*/
-	while (nbTrous<0 || nbTrous>81){ /* La boucle sert à demander à chaque fois une valeur si elle n'est pas comprise entre 0 et 81 */
-	    Ut.afficherSL("Veuillez saisir un nombre de trous compris entre 0 et 81");
-	    nbTrous=Ut.saisirEntier();
-	}
-	//gSecret=initGrilleComplete(); /* Met dans gSecret une grille de Sudoku complète */
-	//gHumain=initGrilleIncomplete(nbTrous,gSecret); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
-	gOrdi=saisirGrilleIncomplete(nbTrous); /* Met dans gOrdi une grille de Sudoku incomplète qui est saisie par un humain */
-	/* à finir valPossibles */
+
+        System.out.println("veuillez saisir le nombre de trous que vous souhaiter dans votre grille de sudoku");
+        int nbTrous =saisirEntierMinMax(0,81);
+	    initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
+	    initGrilleIncomplete(nbTrous,gSecret,gHumain); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
+	    copieMatrice(saisirGrilleIncomplete(nbTrous),gOrdi);
+        //initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss);
 	
         return nbTrous;
     } // fin initPartie
@@ -358,13 +356,13 @@ public class SudokuBase {
      *
      *  action :     effectue un tour du joueur humain
      */
-    /*public static int tourHumain(int [][] gSecret, int [][] gHumain){
-        //___________________________________________________________________
+    public static int tourHumain(int [][] gSecret, int [][] gHumain){
+
 
         return 0;
-    } */ // fin  tourHumain
+    } // fin  tourHumain
 
-    //.........................................................................
+    //......................................................
 
     // Tour de l'ordinateur
     //.........................................................................
@@ -383,7 +381,15 @@ public class SudokuBase {
                 }
             }
         }
-        return new int[0];
+
+        for(int ligne=0;ligne<9;ligne++){
+            for (int colonne=0; colonne<9;colonne++){
+                if(gOrdi[ligne][colonne]==0){
+                    return new int[]{ligne,colonne};
+                }
+            }
+        }
+        return new int[2];
     } // fin chercheTrou
 
     //.........................................................................
