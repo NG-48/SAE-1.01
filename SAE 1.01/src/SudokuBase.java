@@ -163,17 +163,11 @@ public class SudokuBase {
      *  Par exemple, si k=3, i=5 et j=7, la fonction retourne (3,6).
      */
     public static int[] debCarre(int k,int i,int j){
-     	int coor1;
-	int coor2;
-	int modi=i%k;
-	int modj=j%k;
-	coor1=i-modi;
-	coor2=j-modj;
 	int[] tab=new int[2];
-	tab[0]=coor1;
-	tab[1]=coor2;
+	tab[0]=i-i%k;
+	tab[1]=j-j%k;
         return tab;
-    } */ // fin debCarre
+    }// fin debCarre
 
 
     //.........................................................................
