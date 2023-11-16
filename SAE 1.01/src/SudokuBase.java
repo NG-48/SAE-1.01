@@ -438,9 +438,8 @@ public class SudokuBase {
         int malus=0;
 	int [] coor;
 	coor=chercheTrou(gOrdi,nbValPoss);
-	initPossibles(gOrdi,valPossibles,nbValPoss);
-	if (nbValPoss.length==1){
-	    gOrdi[coor[0]][coor[1]]=nbValPoss[0][0];
+	if (nbValPoss[coor[0]][coor[1]]==1){
+	    gOrdi[coor[0]][coor[1]]=uneValeur(valPossibles[coor[0]][coor[1]]);
 	}
 	else{
 	    Ut.afficher("J'utilise un joker");
