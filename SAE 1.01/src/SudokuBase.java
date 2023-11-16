@@ -346,7 +346,7 @@ public class SudokuBase {
 	    initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
 	    initGrilleIncomplete(nbTrous,gSecret,gHumain); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
 	    copieMatrice(saisirGrilleIncomplete(nbTrous),gOrdi);
-        //initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss);
+        initPossibles(gOrdi,valPossibles,nbValPoss);
 	
         return nbTrous;
     } // fin initPartie
@@ -385,6 +385,7 @@ public class SudokuBase {
                 System.out.println("la réponse correcte était : "+gSecret[ligneSaisi][colonneSaisi]);
                 return malus+1;
             } else if (valeurSaisi==gSecret[ligneSaisi][colonneSaisi]){
+                gHumain[ligneSaisi][colonneSaisi]=gSecret[ligneSaisi][colonneSaisi];
                 System.out.println("c'est la réponse correcte!");
                 return malus;
             }else {
@@ -436,20 +437,20 @@ public class SudokuBase {
      */
     public static int tourOrdinateur(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
         int malus=0;
-	int [] coor;
-	coor=chercheTrou(gOrdi,nbValPoss);
-	if (nbValPoss[coor[0]][coor[1]]==1){
-	    gOrdi[coor[0]][coor[1]]=uneValeur(valPossibles[coor[0]][coor[1]]);
-	}
-	else{
-	    Ut.afficher("J'utilise un joker");
-	    afficheGrille(3,gOrdi);
-	    Ut.afficher("Donne moi le résultat pour le point de coordonné " + gOrdi[coor[0]+1][coor[1]+1]);
-	    int reponse=Ut.saisirEntier();
-	    gOrdi[coor[0]][coor[1]]=reponse;
-	    malus++;
-	}
-
+        int [] coor;
+        coor=chercheTrou(gOrdi,nbValPoss);
+        if (nbValPoss[coor[0]][coor[1]]==1){
+            gOrdi[coor[0]][coor[1]]=uneValeur(valPossibles[coor[0]][coor[1]]);
+        }
+        else{
+            Ut.afficherSL("J'utilise un joker");
+            afficheGrille(3,gOrdi);
+            Ut.afficher("Donne moi le résultat pour le point de coordonné " + (coor[0]+1)+" "+(coor[1]+1));
+            int reponse=Ut.saisirEntier();
+            gOrdi[coor[0]][coor[1]]=reponse;
+            malus++;
+        }
+        suppValPoss(gOrdi,coor[0],coor[1],valPossibles,nbValPoss);
         return malus;
     } // fin tourOrdinateur
 
@@ -463,7 +464,8 @@ public class SudokuBase {
     /** pré-requis : aucun
      *  action :     effectue une partie de Sudoku entre le joueur humain et l'ordinateur
      *  résultat :   0 s'il y a match nul, 1 si c'est le joueur humain qui gagne et 2 sinon
-public static int partie(){
+     *  */
+    public static int partie(){
         int[][] gSecret=new int[9][9];
         int[][] gHumain=new int[9][9];
         int[][] gOrdi=new int[9][9];
@@ -483,12 +485,7 @@ public static int partie(){
         }else {
             return 1;
         }
-    }  // fin partie     */
-    /*public static int partie(){
-
-        return 0;
     }  // fin partie
-    */
 
     //.........................................................................
 
