@@ -44,7 +44,7 @@ public class SudokuBase {
      *             de 1 à n égal à lui-même
      */
     public static boolean[] ensPlein(int n){
-      boolean[] tab = new boolean[n+1];
+      boolean[] tab = new boolean[n];
       for (int i=0;i<tab.length;i++){
           tab[i]=true;
       }
@@ -76,7 +76,7 @@ public class SudokuBase {
         int i;
         for (i=0;!ens[i]; i++){
         }
-        return i+1;
+        return i;
     }  // fin uneValeur
 
     //.........................................................................
@@ -127,7 +127,7 @@ public class SudokuBase {
         for(int a=1; a<=k*k;a++){
                 System.out.print(a+" ");
         }
-        System.out.println("");
+        System.out.println();
         String separateur ="";
         for(int b=0 ; b<2*k*k+3 ; b++ ){
             separateur += "-";
@@ -143,7 +143,7 @@ public class SudokuBase {
                     System.out.print(g[ligne][colonne]+" ");
                 }
             }
-            System.out.println("");
+            System.out.println();
             if((ligne+1)%k==0){
                 System.out.println(separateur);
             }
@@ -280,12 +280,12 @@ public class SudokuBase {
     public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
         // on commence par la ligne, puis la colonne puis le carre
         for(int colonne=0; colonne<gOrdi[i].length;colonne++){
-            if(supprime(valPossibles[i][colonne],gOrdi[i][j])){
+            if(gOrdi[i][colonne]>0 && supprime(valPossibles[i][colonne],gOrdi[i][colonne])){
                 nbValPoss[i][colonne]--;
             }
         }
         for(int ligne=0; ligne<gOrdi[i].length;ligne++){
-            if(supprime(valPossibles[ligne][j],gOrdi[i][j])){
+            if(gOrdi[ligne][j]>0 && supprime(valPossibles[ligne][j],gOrdi[ligne][j])){
                 nbValPoss[ligne][j]--;
             }
         }
@@ -294,8 +294,8 @@ public class SudokuBase {
         int colonneCarre= tabCarre[1];
         for(int ligne=ligneCarre;ligne<ligneCarre+3;ligne++){
             for (int colonne=colonneCarre; colonne<colonneCarre+3;colonne++){
-                if(supprime(valPossibles[ligne][colonne],gOrdi[i][j])){
-                    nbValPoss[ligne][j]--;
+                if(gOrdi[ligne][colonne]>0 && supprime(valPossibles[ligne][colonne],gOrdi[ligne][colonne])){
+                    nbValPoss[ligne][colonne]--;
                 }
             }
         }
@@ -315,11 +315,11 @@ public class SudokuBase {
      */
     public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
        for(int i=0;i<gOrdi.length;i++){
-	    for(int j=0;j<gOrdi.length;j++){
-		if(gOrdi[i][j]!=0){
-		    suppValPoss(gOrdi,i,j,valPossibles,nbValPoss);
-		}
-	    }
+	        for(int j=0;j<gOrdi[i].length;j++){
+		        if(gOrdi[i][j]!=0){
+		            suppValPoss(gOrdi,i,j,valPossibles,nbValPoss);
+		        }
+	        }
 	}
 
     }  // fin initPossibles
@@ -343,6 +343,7 @@ public class SudokuBase {
 
         System.out.println("veuillez saisir le nombre de trous que vous souhaiter dans votre grille de sudoku");
         int nbTrous =saisirEntierMinMax(0,81);
+        initPleines(gOrdi,valPossibles,nbValPoss);
 	    initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
 	    initGrilleIncomplete(nbTrous,gSecret,gHumain); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
 	    copieMatrice(saisirGrilleIncomplete(nbTrous),gOrdi);
@@ -410,22 +411,28 @@ public class SudokuBase {
      *
      */
     public static int[] chercheTrou(int[][] gOrdi,int [][]nbValPoss){
-        for(int ligne=0;ligne<9;ligne++){
-            for (int colonne=0; colonne<9;colonne++){
+        int[] coor=new int[2];
+        boolean trouver=true;
+        for(int ligne=0;ligne<9 && trouver;ligne++){
+            for (int colonne=0; colonne<9 && trouver;colonne++){
                 if(nbValPoss[ligne][colonne]==1){
-                    return new int[]{ligne,colonne};
+                    coor[0]=ligne;
+                    coor[1]=colonne;
+                    trouver=false;
                 }
             }
         }
 
-        for(int ligne=0;ligne<9;ligne++){
-            for (int colonne=0; colonne<9;colonne++){
+        for(int ligne=0;ligne<9 && trouver;ligne++){
+            for (int colonne=0; colonne<9 && trouver ;colonne++){
                 if(gOrdi[ligne][colonne]==0){
-                    return new int[]{ligne,colonne};
+                    coor[0]=ligne;
+                    coor[1]=colonne;
+                    trouver=false;
                 }
             }
         }
-        return new int[2];
+        return coor;
     } // fin chercheTrou
 
     //.........................................................................
@@ -439,18 +446,21 @@ public class SudokuBase {
         int malus=0;
         int [] coor;
         coor=chercheTrou(gOrdi,nbValPoss);
-        if (nbValPoss[coor[0]][coor[1]]==1){
-            gOrdi[coor[0]][coor[1]]=uneValeur(valPossibles[coor[0]][coor[1]]);
+        int ligne=coor[0];
+        int colonne=coor[1];
+        if (nbValPoss[ligne][colonne]==1){
+            gOrdi[ligne][colonne]=uneValeur(valPossibles[ligne][colonne]);
         }
         else{
             Ut.afficherSL("J'utilise un joker");
+            Ut.afficherSL("valeur coord: "+nbValPoss[ligne][colonne]);
             afficheGrille(3,gOrdi);
-            Ut.afficher("Donne moi le résultat pour le point de coordonné " + (coor[0]+1)+" "+(coor[1]+1));
+            Ut.afficherSL("Donne moi le résultat pour le point de coordonné " + (ligne+1)+" "+(colonne+1));
             int reponse=Ut.saisirEntier();
-            gOrdi[coor[0]][coor[1]]=reponse;
+            gOrdi[ligne][colonne]=reponse;
             malus++;
         }
-        suppValPoss(gOrdi,coor[0],coor[1],valPossibles,nbValPoss);
+        suppValPoss(gOrdi,ligne,colonne,valPossibles,nbValPoss);
         return malus;
     } // fin tourOrdinateur
 

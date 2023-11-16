@@ -5,6 +5,7 @@ public class TestBis {
 
         System.out.println("veuillez saisir le nombre de trous que vous souhaiter dans votre grille de sudoku");
         int nbTrous =SudokuBase.saisirEntierMinMax(0,81);
+        SudokuBase.initPleines(gOrdi,valPossibles,nbValPoss);
         SudokuBase.initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
         SudokuBase.initGrilleIncomplete(nbTrous,gSecret,gHumain);/* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
         SudokuBase.initGrilleIncomplete(nbTrous,gSecret,gOrdi);
