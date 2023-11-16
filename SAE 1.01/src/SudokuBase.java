@@ -280,12 +280,12 @@ public class SudokuBase {
     public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
         // on commence par la ligne, puis la colonne puis le carre
         for(int colonne=0; colonne<gOrdi[i].length;colonne++){
-            if(gOrdi[i][colonne]>0 && supprime(valPossibles[i][colonne],gOrdi[i][colonne])){
+            if(supprime(valPossibles[i][colonne],gOrdi[i][colonne])){
                 nbValPoss[i][colonne]--;
             }
         }
         for(int ligne=0; ligne<gOrdi[i].length;ligne++){
-            if(gOrdi[ligne][j]>0 && supprime(valPossibles[ligne][j],gOrdi[ligne][j])){
+            if(supprime(valPossibles[ligne][j],gOrdi[ligne][j])){
                 nbValPoss[ligne][j]--;
             }
         }
@@ -294,7 +294,7 @@ public class SudokuBase {
         int colonneCarre= tabCarre[1];
         for(int ligne=ligneCarre;ligne<ligneCarre+3;ligne++){
             for (int colonne=colonneCarre; colonne<colonneCarre+3;colonne++){
-                if(gOrdi[ligne][colonne]>0 && supprime(valPossibles[ligne][colonne],gOrdi[ligne][colonne])){
+                if(supprime(valPossibles[ligne][colonne],gOrdi[ligne][colonne])){
                     nbValPoss[ligne][colonne]--;
                 }
             }
@@ -316,7 +316,7 @@ public class SudokuBase {
     public static void initPossibles(int [][] gOrdi, boolean[][][] valPossibles, int [][]nbValPoss){
        for(int i=0;i<gOrdi.length;i++){
 	        for(int j=0;j<gOrdi[i].length;j++){
-		        if(gOrdi[i][j]!=0){
+		        if(gOrdi[i][j]>0){
 		            suppValPoss(gOrdi,i,j,valPossibles,nbValPoss);
 		        }
 	        }
@@ -343,10 +343,10 @@ public class SudokuBase {
 
         System.out.println("veuillez saisir le nombre de trous que vous souhaiter dans votre grille de sudoku");
         int nbTrous =saisirEntierMinMax(0,81);
-        initPleines(gOrdi,valPossibles,nbValPoss);
-	    initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
-	    initGrilleIncomplete(nbTrous,gSecret,gHumain); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
-	    copieMatrice(saisirGrilleIncomplete(nbTrous),gOrdi);
+	initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
+	initGrilleIncomplete(nbTrous,gSecret,gHumain); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
+	copieMatrice(saisirGrilleIncomplete(nbTrous),gOrdi);
+	initPleines(gOrdi,valPossibles,nbValPoss);
         initPossibles(gOrdi,valPossibles,nbValPoss);
 	
         return nbTrous;
@@ -486,7 +486,7 @@ public class SudokuBase {
         int pointOrdi=0;
         for(;nbTrous>0;nbTrous--){
             pointHumain+= tourHumain(gSecret,gHumain);
-            //pointOrdi+=tourOrdinateur(gOrdi,valPossibles,nbValPoss);
+            pointOrdi+=tourOrdinateur(gOrdi,valPossibles,nbValPoss);
         }
         if(pointHumain<pointOrdi){
             return 2;
