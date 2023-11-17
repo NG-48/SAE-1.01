@@ -1,3 +1,6 @@
+
+
+
 public class TestBis {
 
     public static int initPartie_Bis(int [][] gSecret, int [][] gHumain, int [][] gOrdi,
@@ -36,6 +39,13 @@ public class TestBis {
         }
     }  // fin partie
 
+    public static void afficherTabBoolean(boolean[] tab){
+        System.out.print("["+tab[0]);
+        for (int i=1;i<tab.length;i++){
+            System.out.print(", "+tab[i]);
+        }
+        System.out.println("]");
+    }
     public static void main(String[] args) {
         int gagnant=partie_bis();
         if (gagnant==0){

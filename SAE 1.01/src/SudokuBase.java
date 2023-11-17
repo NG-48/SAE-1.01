@@ -54,7 +54,7 @@ public class SudokuBase {
     //.........................................................................
 
 
-    /** pré-requis : 1 <= val < ens.length
+    /** pré-requis : "1 "<= val < ens.length
      *  action :     supprime la valeur val de l'ensemble représenté par ens, s'il y est
      *  résultat :   vrai ssi val était dans cet ensemble
      */
@@ -73,8 +73,9 @@ public class SudokuBase {
      *  résultat :   un élément de cet ensemble
      */
     public static int uneValeur(boolean[] ens){
-        int i;
-        for (i=0;!ens[i]; i++){
+        int i=1;
+        while (!ens[i]){
+            i++;
         }
         return i;
     }  // fin uneValeur
@@ -130,7 +131,7 @@ public class SudokuBase {
         System.out.println();
         String separateur ="";
         for(int b=0 ; b<2*k*k+3 ; b++ ){
-            separateur += "-";
+            separateur = separateur + "-";
         }
         System.out.println(separateur);
         // affichage des 2 premieres lignes finit
@@ -280,12 +281,12 @@ public class SudokuBase {
     public static void suppValPoss(int [][] gOrdi, int i, int j, boolean[][][] valPossibles, int [][]nbValPoss){
         // on commence par la ligne, puis la colonne puis le carre
         for(int colonne=0; colonne<gOrdi[i].length;colonne++){
-            if(supprime(valPossibles[i][colonne],gOrdi[i][colonne])){
+            if(supprime(valPossibles[i][colonne],gOrdi[i][j])){
                 nbValPoss[i][colonne]--;
             }
         }
         for(int ligne=0; ligne<gOrdi[i].length;ligne++){
-            if(supprime(valPossibles[ligne][j],gOrdi[ligne][j])){
+            if(supprime(valPossibles[ligne][j],gOrdi[i][j])){
                 nbValPoss[ligne][j]--;
             }
         }
@@ -294,7 +295,7 @@ public class SudokuBase {
         int colonneCarre= tabCarre[1];
         for(int ligne=ligneCarre;ligne<ligneCarre+3;ligne++){
             for (int colonne=colonneCarre; colonne<colonneCarre+3;colonne++){
-                if(supprime(valPossibles[ligne][colonne],gOrdi[ligne][colonne])){
+                if(supprime(valPossibles[ligne][colonne],gOrdi[i][j])){
                     nbValPoss[ligne][colonne]--;
                 }
             }
@@ -358,14 +359,13 @@ public class SudokuBase {
 
     /** pré-requis : gHumain est une grille de Sudoju incomplète pouvant se compléter en
      *               la  grille de Sudoku complète gSecret
-     *
      *  résultat :   le nombre de points de pénalité pris par le joueur humain pendant le tour de jeu
-     *
      *  action :     effectue un tour du joueur humain
      */
     public static int tourHumain(int [][] gSecret, int [][] gHumain){
         int malus=0;
         int valeurSaisi;
+        System.out.println("\nc'est votre tour!");
         afficheGrille(3,gHumain);
             System.out.println("veuillez choisir la ligne du trou que vous souhaitez remplir");
             int ligneSaisi = saisirEntierMinMax(1, 9) - 1;
@@ -415,7 +415,7 @@ public class SudokuBase {
         boolean trouver=true;
         for(int ligne=0;ligne<9 && trouver;ligne++){
             for (int colonne=0; colonne<9 && trouver;colonne++){
-                if(nbValPoss[ligne][colonne]==1){
+                if(gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
                     coor[0]=ligne;
                     coor[1]=colonne;
                     trouver=false;
@@ -448,13 +448,18 @@ public class SudokuBase {
         coor=chercheTrou(gOrdi,nbValPoss);
         int ligne=coor[0];
         int colonne=coor[1];
-        if (nbValPoss[ligne][colonne]==1){
+        System.out.println("\nc'est le tour de l'ordinateur!");
+
+        System.out.println("valeur coordonées: "+(ligne+1)+" "+(colonne+1)+" nbValPoss = "+nbValPoss[ligne][colonne]);
+        TestBis.afficherTabBoolean(valPossibles[ligne][colonne]);
+        afficheGrille(3,gOrdi);
+
+        if (gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
             gOrdi[ligne][colonne]=uneValeur(valPossibles[ligne][colonne]);
         }
         else{
             Ut.afficherSL("J'utilise un joker");
-            Ut.afficherSL("valeur coord: "+nbValPoss[ligne][colonne]);
-            afficheGrille(3,gOrdi);
+
             Ut.afficherSL("Donne moi le résultat pour le point de coordonné " + (ligne+1)+" "+(colonne+1));
             int reponse=Ut.saisirEntier();
             gOrdi[ligne][colonne]=reponse;
