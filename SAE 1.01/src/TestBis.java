@@ -27,15 +27,21 @@ public class TestBis {
         int pointHumain=0;
         int pointOrdi=0;
         for(;nbTrous>0;nbTrous--){
+
             pointHumain+= SudokuBase.tourHumain(gSecret,gHumain);
+            System.out.println("Vous avez "+pointHumain+" points");
+
+
             pointOrdi+=SudokuBase.tourOrdinateur(gOrdi,valPossibles,nbValPoss);
+            System.out.println("L'ordinateur a "+pointOrdi+" points");
+
         }
         if(pointHumain<pointOrdi){
-            return 2;
+            return 1;
         } else if (pointHumain==pointOrdi) {
             return 0;
         }else {
-            return 1;
+            return 2;
         }
     }  // fin partie
 
@@ -46,16 +52,48 @@ public class TestBis {
         }
         System.out.println("]");
     }
+
+    public static int partie_bis_Auto(){
+        int[][] gSecret=new int[9][9];
+        int[][] gHumain=new int[9][9];
+        int[][] gOrdi=new int[9][9];
+        boolean[][][] valPossibles = new boolean[9][9][10];
+        boolean[][][] valPossiblesHumain = new boolean[9][9][10];
+        int [][]nbValPoss = new int[9][9];
+        int [][]nbValPossHumain = new int[9][9];
+        int nbTrous=initPartie_Bis(gSecret,gHumain,gOrdi,valPossibles,nbValPoss);
+        SudokuBase.initPleines(gHumain,valPossiblesHumain,nbValPossHumain);
+        SudokuBase.initPossibles(gHumain,valPossiblesHumain,nbValPossHumain);
+        int pointHumain=0;
+        int pointOrdi=0;
+        for(;nbTrous>0;nbTrous--){
+
+            pointHumain+= SudokuBase.tourOrdinateur(gHumain,valPossiblesHumain,nbValPossHumain);
+            System.out.println("Vous avez "+pointHumain+" points");
+
+
+            pointOrdi+=SudokuBase.tourOrdinateur(gOrdi,valPossibles,nbValPoss);
+            System.out.println("L'ordinateur a "+pointOrdi+" points");
+
+        }
+        if(pointHumain<pointOrdi){
+            return 1;
+        } else if (pointHumain==pointOrdi) {
+            return 0;
+        }else {
+            return 2;
+        }
+    }  // fin partie
     public static void main(String[] args) {
-        int gagnant=partie_bis();
+        int gagnant=partie_bis_Auto();
         if (gagnant==0){
-            Ut.afficherSL("C'est un match nul !");
+            Ut.afficherSL("\nC'est un match nul !");
         }
         else if(gagnant==1){
-            Ut.afficherSL("Le gagnant est le joueur humain !");
+            Ut.afficherSL("\nLe gagnant est le joueur humain !");
         }
         else{
-            Ut.afficherSL("Le gagnant est l'ordinateur !");
+            Ut.afficherSL("\nLe gagnant est l'ordinateur !");
         }
     }
 }
