@@ -452,20 +452,27 @@ public class SudokuBase {
 
         System.out.println("valeur coordonées: "+(ligne+1)+" "+(colonne+1)+" nbValPoss = "+nbValPoss[ligne][colonne]);
         TestBis.afficherTabBoolean(valPossibles[ligne][colonne]);
+        Ut.afficherSL("Voici la grille de l'ordinateur : ");
         afficheGrille(3,gOrdi);
 
         if (gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
             gOrdi[ligne][colonne]=uneValeur(valPossibles[ligne][colonne]);
+            Ut.afficherSL("Voici la grille de l'ordinateur après avoir jouer son coup aux coordonnées :" +(ligne+1)+" "+(colonne+1));
+            afficheGrille(3,gOrdi);
         }
         else{
             Ut.afficherSL("J'utilise un joker");
-
             Ut.afficherSL("Donne moi le résultat pour le point de coordonné " + (ligne+1)+" "+(colonne+1));
             int reponse=Ut.saisirEntier();
             gOrdi[ligne][colonne]=reponse;
             malus++;
+            Ut.afficherSL("Voici la grille de l'ordinateur après avoir rempli le trou aux coordonnées :"+(ligne+1)+" "+(colonne+1+"grâce au joker"));
+            afficheGrille(3,gOrdi);
         }
         suppValPoss(gOrdi,ligne,colonne,valPossibles,nbValPoss);
+        if (malus>0){
+            Ut.afficherSL("Voici le nombre de malus que l'ordinateur possède :"+malus);
+        }
         return malus;
     } // fin tourOrdinateur
 
