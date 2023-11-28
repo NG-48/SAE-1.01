@@ -1,4 +1,4 @@
-package Extentions;
+import java.util.Random;
 
 public class Extensions {
 
@@ -72,10 +72,137 @@ public class Extensions {
      * met fin a la partie en disant que l'humain a tricher
      */
         public static void finDePartieTriche(){
-            //a complété
+            System.out.println("Vous avez trichée, le gagnant est l'ordinateur");
+            System.exit(0);
         }
     //.....................................................................
     //          fin extension 3.2
+    //.....................................................................
+
+    //.....................................................................
+    //          extension 3.4
+    //.....................................................................
+
+
+    /*
+     * action : modifie les 2 grilles carré IDENTIQUES en leur fesant unr rotation de 90°
+     * dans le sens anti-horaire
+     */
+    public static void rotationGrille(int[][] base,int[][] modif){
+            for (int ligne = 0; ligne<modif.length;ligne++){
+                for (int colonne=0; colonne<modif[ligne].length;colonne++){
+                    modif[modif.length-colonne-1][ligne] = base[ligne][colonne];
+                }
+            }
+            SudokuBase.copieMatrice(modif,base);
+    }
+
+
+    /*
+     *action : modifie les 2 grilles carré IDENTIQUES par rapport a leur symétrie centrale
+     */
+    public static void symetrieCentrale(int[][] base,int[][] modif){
+        for (int ligne = 0; ligne<modif.length;ligne++){
+            for (int colonne=0; colonne<modif[ligne].length;colonne++){
+                modif[ligne][modif.length-colonne-1] = base[ligne][colonne];
+            }
+        }
+        SudokuBase.copieMatrice(modif,base);
+    }
+
+    /*
+     *action : modifie les 2 grilles carré IDENTIQUES par rapport a leur diagonale principale
+     */
+    public static void symetrieDiagonale(int[][] base,int[][] modif){
+        for (int ligne = 0; ligne<modif.length;ligne++){
+            for (int colonne=0; colonne<modif[ligne].length;colonne++){
+                modif[colonne][ligne] = base[ligne][colonne];
+            }
+        }
+        SudokuBase.copieMatrice(modif,base);
+    }
+
+
+    /*
+     *action : echange les 2 lignes entrées en paramètres des matrices IDENTIQUES
+     *
+     * en echangera en premier dans modif puis copie des resultats dans base
+     */
+    public static void echangeLigne(int[][] base,int[][] modif,int l1,int l2){
+        for (int c1 = 0; c1<modif.length;c1++){
+            modif[l2][c1] = base[l1][c1];
+        }
+        for (int c2 = 0; c2<modif.length;c2++) {
+            modif[l1][c2] = base[l2][c2];
+        }
+
+
+        for (int c3 = 0; c3<modif.length;c3++){
+            base[l1][c3] = modif[l1][c3];
+        }
+        for (int c4 = 0; c4<modif.length;c4++) {
+            base[l2][c4] = modif[l2][c4];
+        }
+    }
+
+
+    /*
+     *action : mélange la grille passée en paramettre en appelant au hasard les autres fonctions
+     * le int demander en paramètre definit le nombre minimal de fonctions appelée (le max etant de 3 suplémentaire)
+     *
+     * on decide que l'on ne peut pas appelée la même fonction de maniere consécutive
+     */
+    public static void melangeGrille(int[][] grille,int min){
+        Random random = new Random();
+        int[][] grille2=new int[9][9];
+        SudokuBase.copieMatrice(grille,grille2);
+
+        int actuelle;
+        int precedant=-1; // valeur bidon
+
+        int ligne1;
+        int ligne2;
+        int carre;
+
+        int tour = random.nextInt(3) +min + 1;
+
+        do{
+            // gestion du choix aléatoire de la fonction
+
+            do{
+                actuelle= random.nextInt(4);
+            }while (actuelle==precedant);
+            precedant=actuelle;
+
+            //appel des différentes fonctions
+
+            if(actuelle==0){
+                rotationGrille(grille2,grille);
+            }
+            else if(actuelle==1){
+                symetrieCentrale(grille2,grille);
+            }
+            else if(actuelle==2){
+                symetrieDiagonale(grille2,grille);
+            }
+            else{
+                // selection de 2 lignes au hasard qui sont dans le meme carre
+
+                carre = random.nextInt(3);
+                ligne1 = random.nextInt(3);
+                ligne2=  (random.nextInt(2) +1 +ligne1)%3;
+                ligne1 += carre*3;
+                ligne2 += carre*3;
+
+                echangeLigne(grille2,grille,ligne1,ligne2);
+
+            }
+
+            tour--;
+        }while (tour>0);
+    }
+    //.....................................................................
+    //          fin extension 3.4
     //.....................................................................
 
     public static void main(String[] args) {
