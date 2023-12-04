@@ -205,6 +205,96 @@ public class Extensions {
     //          fin extension 3.4
     //.....................................................................
 
+    //.....................................................................
+    //          extension 3.5
+    //.....................................................................
+
+
+    /*
+     *action:
+     */
+    public static int grilleFacile(int[][] grille, int nbTrous){
+        boolean aTrouver;
+        boolean[][][] valPoss= new boolean[9][9][10];
+        int[][] mat= new int[9][9], nbValPoss=new int[9][9];
+        SudokuBase.copieMatrice(grille,mat);
+        SudokuBase.initGrilleIncomplete(nbTrous,mat,grille);
+        SudokuBase.initPleines(grille,valPoss,nbValPoss);
+        SudokuBase.initPossibles(grille,valPoss,nbValPoss);
+        do{
+            aTrouver  = false;
+            for (int ligne = 0; ligne < 9 && !aTrouver; ligne++) {
+                for (int colonne = 0; colonne < 9 && !aTrouver; colonne++) {
+                    if (grille[ligne][colonne] != 0 && nbValPoss[ligne][colonne] == 1) {
+                        SudokuBase.suppValPoss(grille,ligne,colonne,valPoss,nbValPoss);
+                        grille[ligne][colonne]=0;
+                        aTrouver=true;
+                        nbTrous++;
+                        nbValPoss[ligne][colonne]--;
+                    }
+                }
+            }
+
+        }while (aTrouver);
+        return nbTrous;
+    }
+
+
+
+
+
+    //.....................................................................
+    //          fin extension 3.5
+    //.....................................................................
+
+    //.....................................................................
+    //          Début extension 3.1
+    //.....................................................................
+    public static int tourOrdinateur(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss) {
+        int malus = 0;
+        int[] coor;
+        coor = Sudoku.chercheTrou(gOrdi, nbValPoss);
+        int ligne = coor[0];
+        int colonne = coor[1];
+        System.out.println("\nc'est le tour de l'ordinateur!");
+
+        /*System.out.println("valeur coordonées: "+(ligne+1)+" "+(colonne+1)+" nbValPoss = "+nbValPoss[ligne][colonne]);
+        TestBis.afficherTabBoolean(valPossibles[ligne][colonne]);*/
+
+        if (gOrdi[ligne][colonne] == 0 && (nbValPoss[ligne][colonne] == 1 || nbValPoss[ligne][colonne]==2 || nbValPoss[ligne][colonne]==3)) {
+            //mise a false forcée du premier rang de valpossible pour évité que uneValeur renvoie 0
+            valPossibles[ligne][colonne][0] = false;
+            int validation=-5;
+            do {
+                int valeurTentative = Sudoku.uneValeur(valPossibles[ligne][colonne]);
+                gOrdi[ligne][colonne] = Sudoku.uneValeur(valPossibles[ligne][colonne]);
+                Ut.afficherSL("Voici la valeur que l'ordinateur a tenté : " + valeurTentative + " aux coordonnées :" + (ligne + 1) + (colonne + 1) + " Veuillez confirmer le résultat. Si l'ordinateur a trouvé la bonne réponse écrivez 0 sinon écrivez 1");
+                validation = Ut.saisirEntier();
+                if (validation == 1) {
+                    valPossibles[ligne][colonne][valeurTentative] = false;
+                }
+            }while(validation!=0);
+            Sudoku.afficheGrille(3, gOrdi);
+        } else {
+            Ut.afficherSL("J'utilise un joker");
+            Ut.afficherSL("Donne moi le résultat pour le point de coordonnées " + (ligne + 1) + " " + (colonne + 1));
+            int reponse = Sudoku.saisirEntierMinMax(1, 9);
+            gOrdi[ligne][colonne] = reponse;
+            malus++;
+            Ut.afficherSL("l'ordinateur met " + reponse + " aux coordonnées suivante : " + (ligne + 1) + " " + (colonne + 1) + "\nvoici sa grille après avoir jouée");
+            Sudoku.afficheGrille(3, gOrdi);
+        }
+        Sudoku.suppValPoss(gOrdi, ligne, colonne, valPossibles, nbValPoss);
+        return malus;
+    }
+    //.....................................................................
+    //          fin extension 3.1
+    //.....................................................................
+
+    //.....................................................................
+    //          Début extension 3.3
+    //.....................................................................
+
     public static void main(String[] args) {
 
     }

@@ -11,33 +11,8 @@ public class test {
                 {2, 8, 7, 4, 1, 9, 6, 3, 5},
                 {3, 4, 5, 2, 8, 6, 1, 7, 9}
         };
+        System.out.println(Extensions.grilleFacile(mat, 20));
         affiche(mat);
-        for (int tour=0;tour<2;tour++){
-            Extensions.melangeGrille(mat,2);
-            System.out.println();
-            affiche(mat);
-
-        }
-        for(int ligne=0;ligne< mat.length;ligne++){
-            System.out.print(Extensions.testTricheLigne(mat[ligne]) + " ");
-        }
-        System.out.println();
-        for(int colonne=0;colonne< mat.length;colonne++){
-            System.out.print(Extensions.testTricheColonne(mat,colonne) + " ");
-        }
-        System.out.println();
-        int ligne=0;
-        int colonne=0;
-        while (ligne<9){
-            System.out.print(Extensions.testTricheCarre(mat,ligne,colonne) + " ");
-            colonne +=3;
-            if(colonne>8){
-                colonne=0;
-                ligne+=3;
-            }
-        }
-        System.out.println();
-
     }
     public static void affiche(int[][] mat){
         for (int i = 0; i < mat.length; i++) {
