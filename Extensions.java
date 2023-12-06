@@ -99,12 +99,12 @@ public class Extensions {
 
 
     /*
-     *action : modifie les 2 grilles carré IDENTIQUES par rapport a leur symétrie centrale
+     *action : modifie les 2 grilles carré IDENTIQUES par rapport a leur symétrie centrale de l'axe horizontale
      */
     public static void symetrieCentrale(int[][] base,int[][] modif){
         for (int ligne = 0; ligne<modif.length;ligne++){
             for (int colonne=0; colonne<modif[ligne].length;colonne++){
-                modif[ligne][modif.length-colonne-1] = base[ligne][colonne];
+                modif[modif.length-ligne-1][colonne] = base[ligne][colonne];
             }
         }
         SudokuBase.copieMatrice(modif,base);
@@ -211,7 +211,8 @@ public class Extensions {
 
 
     /*
-     *action:
+     *action: demande en entrée un nombre de trou minimal et une grille de sudoku complete
+     * qu'il va rendre incomplete avec un niveau de difficultées facile . Retourne le nombre de trou final
      */
     public static int grilleFacile(int[][] grille, int nbTrous){
         boolean aTrouver;

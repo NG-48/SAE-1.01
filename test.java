@@ -11,7 +11,9 @@ public class test {
                 {2, 8, 7, 4, 1, 9, 6, 3, 5},
                 {3, 4, 5, 2, 8, 6, 1, 7, 9}
         };
-        System.out.println(Extensions.grilleFacile(mat, 20));
+        int[][] mat2 = new int[9][9];
+        SudokuBase.copieMatrice(mat,mat2);
+        Extensions.symetrieCentrale(mat,mat2);
         affiche(mat);
     }
     public static void affiche(int[][] mat){

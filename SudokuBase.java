@@ -1,4 +1,8 @@
-
+import java.util.*;
+import java.lang.*;
+import java.io.IOException; // MODIFICI
+import java.io.BufferedReader; // MODIFICI
+import java.io.FileReader; // MODIFICI
 
 public class SudokuBase {
     //test
@@ -116,8 +120,58 @@ public class SudokuBase {
      * 8 |0 9 0|0 0 0|7 2 0|
      * 9 |2 4 0|6 9 0|0 0 0|
      * -------------------
-     * <p>
-     * <p>
+     *
+     *
+     *
+     */
+    /* MODIFICI
+     *  pré-requis : 0 <= nbTrous <= 81 ; g est une grille 9x9 (vide a priori) ;
+     *               fic est un nom de fichier de ce répertoire contenant des valeurs de Sudoku
+     *  action :   remplit g avec les valeurs lues dans fic. Si la grille ne contient pas des valeurs
+     *             entre 0 et 9 ou n'a pas exactement nbTrous valeurs nulles, la méthode doit signaler l'erreur,
+     *             et l'utilisateur doit corriger le fichier jusqu'à ce que ces conditions soient vérifiées.
+     *             On suppose dans la version de base que la grille saisie est bien une grille de Sudoku incomplète.
+     */
+    public static void saisirGrilleIncompleteFichier(int nbTrous, int [][] g, String fic){
+        int lu;
+        try (BufferedReader lecteur = new BufferedReader(new FileReader(fic))) {
+            for (int i = 0 ; i < 9 ; i++){
+                String ligne = lecteur.readLine();
+                String [] valeurs = ligne.split("\\s+");
+                for (int j = 0 ; j < 9 ; j++) {
+                    lu = Integer.parseInt(valeurs[j]);
+                    nbTrous--;
+                    if(nbTrous<0 || lu<0 || lu>9){
+                        erreurFichier(lu);
+                        
+                    }
+                    // Des tests d'erreur sont à ajouter quelque part !
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } // fin saisirGrilleIncompleteFichier
+
+    /*
+     *action : indique la source de l'erreur a l'aide de nb :
+     * si nb = 0 alors dit un probleme au niveaux du nombre de trous
+     * sinon indique qu'une valeur interdite a été saisie
+     */
+    public static void erreurFichier(int nb){
+        if(nb==0) {
+            System.err.println("un nombre de trou incorrecte est présent dans votre fichier");
+            System.err.println("veuillez corriger votre grille");
+
+        }
+        else {
+            System.err.println("la valeur "+nb+" est présente dans votre grille ");
+            System.err.println("veuillez corriger votre grille");
+        }
+    }// fin erreurFichier
+
+     /*
      * pré-requis : 0<=k<=3 et g est une grille k^2xk^2 dont les valeurs sont comprises
      * entre 0 et k^2 et qui est partitionnée en k sous-carrés kxk
      * action : affiche la  grille g avec ses sous-carrés et avec les numéros des lignes
