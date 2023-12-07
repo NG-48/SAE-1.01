@@ -49,7 +49,7 @@ public class SudokuBase {
      * de 1 à n égal à lui-même
      */
     public static boolean[] ensPlein(int n) {
-        boolean[] tab = new boolean[n];
+        boolean[] tab = new boolean[n+1];
         for (int i = 0; i < tab.length; i++) {
             tab[i] = true;
         }
@@ -80,7 +80,7 @@ public class SudokuBase {
      * résultat :   un élément de cet ensemble
      */
     public static int uneValeur(boolean[] ens) {
-        int i = 0;
+        int i = 1;
         while (!ens[i]) {
             i++;
         }
@@ -143,7 +143,7 @@ public class SudokuBase {
                     nbTrous--;
                     if(nbTrous<0 || lu<0 || lu>9){
                         erreurFichier(lu);
-                        
+
                     }
                     // Des tests d'erreur sont à ajouter quelque part !
                 }
