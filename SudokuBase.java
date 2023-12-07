@@ -134,24 +134,42 @@ public class SudokuBase {
      */
     public static void saisirGrilleIncompleteFichier(int nbTrous, int [][] g, String fic){
         int lu;
-        try (BufferedReader lecteur = new BufferedReader(new FileReader(fic))) {
-            for (int i = 0 ; i < 9 ; i++){
-                String ligne = lecteur.readLine();
-                String [] valeurs = ligne.split("\\s+");
-                for (int j = 0 ; j < 9 ; j++) {
-                    lu = Integer.parseInt(valeurs[j]);
-                    nbTrous--;
-                    if(nbTrous<0 || lu<0 || lu>9){
-                        erreurFichier(lu);
-
+        boolean estValable;
+        int Trous;
+        do{
+            estValable =true;
+            Trous = nbTrous;
+            try (BufferedReader lecteur = new BufferedReader(new FileReader(fic))) {
+                for (int i = 0 ; i < 9 && estValable; i++){
+                    String ligne = lecteur.readLine();
+                    String [] valeurs = ligne.split("\\s+");
+                    for (int j = 0 ; j < 9 && estValable; j++) {
+                        lu = Integer.parseInt(valeurs[j]);
+                        if(lu==0){
+                            Trous--;
+                        }
+                        g[i][j]=lu;
+                        if(Trous<0 || lu<0 || lu>9){
+                            erreurFichier(i,j,lu);
+                            estValable=false;
+                        }
                     }
-                    // Des tests d'erreur sont à ajouter quelque part !
-                }
 
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            if(!estValable){
+                System.err.println("lorsque vous aurez mit a jour votre fichier saisisez un entier");
+                Ut.saisirEntier();
+            }
+            else if (Trous!=0){
+                System.err.println("un nombre insufisant de trous est présent, il manque "+Trous+" trous");
+                System.err.println("lorsque vous aurez mit a jour votre fichier saisisez un entier");
+                Ut.saisirEntier();
+            }
+        }while (!estValable || Trous!=0);
+
     } // fin saisirGrilleIncompleteFichier
 
     /*
@@ -159,16 +177,16 @@ public class SudokuBase {
      * si nb = 0 alors dit un probleme au niveaux du nombre de trous
      * sinon indique qu'une valeur interdite a été saisie
      */
-    public static void erreurFichier(int nb){
+    public static void erreurFichier(int ligne,int colonne,int nb){
+        System.err.println("une érreur a été detectée a la ligne "+ (ligne+1) +" et a la colonne "+(colonne+1));
         if(nb==0) {
             System.err.println("un nombre de trou incorrecte est présent dans votre fichier");
-            System.err.println("veuillez corriger votre grille");
 
         }
         else {
             System.err.println("la valeur "+nb+" est présente dans votre grille ");
-            System.err.println("veuillez corriger votre grille");
         }
+        System.err.println();
     }// fin erreurFichier
 
      /*
@@ -403,9 +421,13 @@ public class SudokuBase {
 
         System.out.println("veuillez saisir le nombre de trous que vous souhaiter dans votre grille de sudoku");
         int nbTrous = saisirEntierMinMax(0, 81);
+
+        System.out.println("veuillez saisir le nom de votre fichier contenant votre grille");
+        String fic = Ut.saisirChaine();
+
         initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
         initGrilleIncomplete(nbTrous, gSecret, gHumain); /* Met dans gHumain une grille de Sudoku incomplète mais qui peut etre compléter en gSecret avec nbTrous*/
-        saisirGrilleIncomplete(nbTrous, gOrdi);
+        saisirGrilleIncompleteFichier(nbTrous, gOrdi,fic);
         initPleines(gOrdi, valPossibles, nbValPoss);
         initPossibles(gOrdi, valPossibles, nbValPoss);
 
