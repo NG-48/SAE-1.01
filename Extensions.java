@@ -302,20 +302,19 @@ public class Extensions {
         tabTrous[card-1][1]=y;
     }
 
-    public static int[][] depiler(int[][] tabTrous){
+    public static int[] depiler(int[][] tabTrous){
         int card=tabTrous[0][0];
-        int[][] coor=new int[1][1];
-        coor[0][0]=tabTrous[card-1][0];
-        coor[0][1]=tabTrous[card-1][1];
+        int[][] coor=new int[2];
+        coor[0]=tabTrous[card-1][0];
+        coor[1]=tabTrous[card-1][1];
         tabTrous[0][0]--;
         tabTrous[card-1][0]=0;
         tabTrous[card-1][1]=0;
         return coor;
     }
 
-    public static void gestionTrous(int[][] gOrdi, int[][] nbValPoss){
+    public static int[][] gestionTrous(int[][] gOrdi, int[][] nbValPoss){
         int[][] tabTrous=new int[2][81];
-        int[][] coor=new int[2][2];
         int card=0;
         for(int ligne=0;ligne<9;ligne++){
             for(int colonne=0;colonne<9;colonne++){
@@ -325,7 +324,17 @@ public class Extensions {
                 }
             }
         }
+        return tabTrous;
     }
+
+    public static void ajoutTrousEvidents(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss) {
+        int[] coor=new int[2];
+        int[][] tabTrous=gestionTrous(gOrdi,valPossibles);
+        coor=depiler(tabTrous);
+        valPossibles[coor[0]][coor[1]][0]=false;
+        gOrdi[coor[0]][coor[1]]=uneValeur(valPossibles[coor[0]][coor[1]]);
+        suppValPoss(gOrdi, ligne, colonne, valPossibles, nbValPoss);
+    } // fin ajoutTrousEvidents
     
 
     //.....................................................................
