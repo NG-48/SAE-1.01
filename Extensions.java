@@ -295,20 +295,21 @@ public class Extensions {
     //.....................................................................
     //          Début extension 3.3
     //.....................................................................
-
-    public static void empiler(int[][] tab, int card, int x, int y){
-        tab[0][0]++;
-        tab[0][card-1]=x;
-        tab[1][card-1]=y;
+    public static void empiler(int[][] tabTrous, int x, int y){
+        tabTrous[0][0]++;
+        int card=tabTrous[0][0];
+        tabTrous[card-1][0]=x;
+        tabTrous[card-1][1]=y;
     }
 
-    public static int[][] depiler(int[][] tab, int card){
+    public static int[][] depiler(int[][] tabTrous){
+        int card=tabTrous[0][0];
         int[][] coor=new int[1][1];
-        coor[0][0]=tab[card-1][0];
-        coor[0][1]=tab[card-1][1];
-        tab[0][0]--;
-        tab[card-1][0]=0;
-        tab[card-1][1]=0;
+        coor[0][0]=tabTrous[card-1][0];
+        coor[0][1]=tabTrous[card-1][1];
+        tabTrous[0][0]--;
+        tabTrous[card-1][0]=0;
+        tabTrous[card-1][1]=0;
         return coor;
     }
 
@@ -320,11 +321,12 @@ public class Extensions {
             for(int colonne=0;colonne<9;colonne++){
                 if(gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
                     card++;
-                    tabTrous=empiler(tabTrous, card, ligne, colonne);
+                    tabTrous=empiler(tabTrous, ligne, colonne);
                 }
             }
         }
     }
+    
 
     //.....................................................................
     //          fin extension 3.3
