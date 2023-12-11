@@ -315,11 +315,9 @@ public class Extensions {
 
     public static int[][] gestionTrous(int[][] gOrdi, int[][] nbValPoss){
         int[][] tabTrous=new int[2][81];
-        int card=0;
         for(int ligne=0;ligne<9;ligne++){
             for(int colonne=0;colonne<9;colonne++){
                 if(gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
-                    card++;
                     tabTrous=empiler(tabTrous, ligne, colonne);
                 }
             }
