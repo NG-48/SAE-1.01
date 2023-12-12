@@ -251,42 +251,61 @@ public class Extensions {
     //.....................................................................
     //          Début extension 3.1
     //.....................................................................
-    public static int tourOrdinateur(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss) {
+    public static int tourOrdi(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss,int[][] tabTrous) {
         int malus = 0;
         int[] coor;
-        coor = Sudoku.chercheTrou(gOrdi, nbValPoss);
+        coor = rechercheTrou(gOrdi, nbValPoss,tabTrous);
         int ligne = coor[0];
         int colonne = coor[1];
         System.out.println("\nc'est le tour de l'ordinateur!");
 
-        /*System.out.println("valeur coordonées: "+(ligne+1)+" "+(colonne+1)+" nbValPoss = "+nbValPoss[ligne][colonne]);
-        TestBis.afficherTabBoolean(valPossibles[ligne][colonne]);*/
 
-        if (gOrdi[ligne][colonne] == 0 && (nbValPoss[ligne][colonne] == 1 || nbValPoss[ligne][colonne]==2 || nbValPoss[ligne][colonne]==3)) {
-            //mise a false forcée du premier rang de valpossible pour évité que uneValeur renvoie 0
-            valPossibles[ligne][colonne][0] = false;
-            int validation=-5;
+        if (nbValPoss[ligne][colonne] == 1 || nbValPoss[ligne][colonne]==2 || nbValPoss[ligne][colonne]==3) {
+            boolean doitTrouver = true;
             do {
                 int valeurTentative = Sudoku.uneValeur(valPossibles[ligne][colonne]);
-                gOrdi[ligne][colonne] = Sudoku.uneValeur(valPossibles[ligne][colonne]);
-                Ut.afficherSL("Voici la valeur que l'ordinateur a tenté : " + valeurTentative + " aux coordonnées :" + (ligne + 1) + (colonne + 1) + " Veuillez confirmer le résultat. Si l'ordinateur a trouvé la bonne réponse écrivez 0 sinon écrivez 1");
-                validation = Ut.saisirEntier();
-                if (validation == 1) {
+                if(confirmationValeur(coor,valeurTentative)){
+                    gOrdi[ligne][colonne] = valeurTentative;
+                    doitTrouver=false;
+                }else {
                     valPossibles[ligne][colonne][valeurTentative] = false;
+                    malus++;
+                    
+                    //extension 3.2
+                    if(nbValPoss[ligne][colonne] == 1){
+                        finDePartieTriche();
+                    }
                 }
-            }while(validation!=0);
-            Sudoku.afficheGrille(3, gOrdi);
-        } else {
+            }while(doitTrouver);
+
+            //extention 3.2
+        }else if(nbValPoss[ligne][colonne]==0){
+            finDePartieTriche();
+        }
+        else {
             Ut.afficherSL("J'utilise un joker");
             Ut.afficherSL("Donne moi le résultat pour le point de coordonnées " + (ligne + 1) + " " + (colonne + 1));
             int reponse = Sudoku.saisirEntierMinMax(1, 9);
+
+            //extention 3.2
+            if(!valPossibles[ligne][colonne][reponse]){
+                finDePartieTriche();
+            }
             gOrdi[ligne][colonne] = reponse;
             malus++;
-            Ut.afficherSL("l'ordinateur met " + reponse + " aux coordonnées suivante : " + (ligne + 1) + " " + (colonne + 1) + "\nvoici sa grille après avoir jouée");
-            Sudoku.afficheGrille(3, gOrdi);
+
         }
+
+        Ut.afficherSL("l'ordinateur met " + gOrdi[ligne][colonne] + " aux coordonnées suivante : " + (ligne + 1) + " " + (colonne + 1) + "\nvoici sa grille après avoir jouée");
+        Sudoku.afficheGrille(3, gOrdi);
         Sudoku.suppValPoss(gOrdi, ligne, colonne, valPossibles, nbValPoss);
         return malus;
+    }
+
+    public static boolean confirmationValeur(int[] coor, int valeur){
+        System.out.println("l'ordinateur veut jouer la valeur "+valeur+" aux coordonée suivantes : "+coor[0]+" "+coor[1]);
+        System.out.println("si la valeur proposer est correcte veuillez saisir 0 sinon saisir 1");
+        return SudokuBase.saisirEntierMinMax(0,1)==0?true:false;
     }
     //.....................................................................
     //          fin extension 3.1
@@ -304,7 +323,7 @@ public class Extensions {
 
     public static int[] depiler(int[][] tabTrous){
         int card=tabTrous[0][0];
-        int[] coor=new int[1][1];
+        int[] coor=new int[2];
         coor[0]=tabTrous[card-1][0];
         coor[1]=tabTrous[card-1][1];
         tabTrous[0][0]--;
@@ -319,7 +338,7 @@ public class Extensions {
         for(int ligne=0;ligne<9;ligne++){
             for(int colonne=0;colonne<9;colonne++){
                 if(gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
-                    tabTrous=empiler(tabTrous, ligne, colonne);
+                    empiler(tabTrous, ligne, colonne);
                 }
             }
         }
