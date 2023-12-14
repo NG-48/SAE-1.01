@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 
 public class Extensions {
@@ -72,9 +75,70 @@ public class Extensions {
      * met fin a la partie en disant que l'humain a tricher
      */
         public static void finDePartieTriche(){
-            System.out.println("Vous avez trichée, le gagnant est l'ordinateur");
+            System.out.println("Vous avez triché, le gagnant est l'ordinateur");
             System.exit(0);
         }
+
+    public static void saisirGrilleIncompleteFichier(int nbTrous, int [][] g, String fic){
+        int lu;
+        boolean estValable;
+        int Trous;
+        do{
+            estValable =true;
+            Trous = nbTrous;
+            try (BufferedReader lecteur = new BufferedReader(new FileReader(fic))) {
+                for (int i = 0 ; i < 9 && estValable; i++){
+                    String ligne = lecteur.readLine();
+                    String [] valeurs = ligne.split("\\s+");
+                    for (int j = 0 ; j < 9 && estValable; j++) {
+                        lu = Integer.parseInt(valeurs[j]);
+                        g[i][j]=lu;
+                        if(lu<0 || lu>9){
+                            Ut.afficherSL("le nombre "+lu+" est présent à la ligne "+ (i+1) +" et à la colonne "+ (j+1));
+                            estValable=false;
+                        }
+                        else if(lu==0){
+                            Trous--;
+                        }
+
+                        if(j==8){
+                            if(testTricheLigne(g[i])){
+                                System.out.println("un doublon est présent sur la ligne " +(i+1));
+                                estValable=false;
+                            }
+                        }if(i==8){
+                            if(testTricheColonne(g,j)){
+                                System.out.println("un doublon est présent sur la colonne " +(j+1));
+                                estValable=false;
+                            }
+                        }if((i+1)%3==0 && (j+1)%3==0){
+                            if(testTricheCarre(g,i,j)){
+                                System.out.println("un doublon est présent dans le carré contenant la case de coordonées " +(i+1)+" "+ (j+1));
+                                estValable=false;
+                            }
+                        }
+
+
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(!estValable){
+                SudokuBase.erreurFichier();
+            }
+            else if (Trous>0){
+                Ut.afficherSL("un nombre insufisant de trous est présent, il manque "+Trous+" trous");
+                SudokuBase.erreurFichier();
+            }else if (Trous<0){
+                Ut.afficherSL("Il y a "+(-1*Trous)+" trous présent de trop dans votre grille, merci de corriger votre grille");
+                SudokuBase.erreurFichier();
+            }
+        }while (!estValable || Trous!=0);
+
+    } // fin saisirGrilleIncompleteFichier
     //.....................................................................
     //          fin extension 3.2
     //.....................................................................
@@ -485,7 +549,7 @@ public class Extensions {
         System.out.println("veuillez saisir le nom de votre fichier contenant votre grille");
         String fic = Ut.saisirChaine();
 
-        SudokuBase.saisirGrilleIncompleteFichier(nbTrous, gOrdi,fic);
+        saisirGrilleIncompleteFichier(nbTrous, gOrdi,fic);
         SudokuBase.initPossibles(gOrdi, valPossibles, nbValPoss);
 
         return nbTrous;
@@ -496,7 +560,7 @@ public class Extensions {
         int[][] gOrdi = new int[9][9];
         boolean[][][] valPossibles = new boolean[9][9][10];
         int[][] nbValPoss = new int[9][9];
-        int[][] tabTrous=new int[2][82];
+        int[][] tabTrous=new int[82][2];
 
 
         int nbTrous = initPartie(gSecret, gHumain, gOrdi, valPossibles, nbValPoss,tabTrous);

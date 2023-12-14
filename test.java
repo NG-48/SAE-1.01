@@ -4,7 +4,7 @@ public class test {
        SudokuBase.initGrilleComplete(mat);
        Extensions.melangeGrille(mat,14);
        affiche(mat);
-       SudokuBase.initGrilleIncomplete(48,mat,mat);
+       SudokuBase.initGrilleIncomplete(81,mat,mat);
        System.out.println();
        affiche(mat);
     }
