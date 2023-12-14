@@ -1,14 +1,12 @@
 public class test {
     public static void main(String[] args) {
-        int[][] mat= new int[9][9], nbvalposs = new int[9][9];
-        boolean[][][] valposs= new boolean[9][9][10];
-        SudokuBase.initGrilleComplete(mat);
-        Extensions.melangeGrille(mat,14);
-        int nbTrous = Extensions.grilleFacile(mat);
-        SudokuBase.initPossibles(mat,valposs,nbvalposs);
-        for (; nbTrous>0; nbTrous--){
-            SudokuBase.tourOrdinateur(mat,valposs,nbvalposs);
-        }
+       int[][] mat=new int[9][9];
+       SudokuBase.initGrilleComplete(mat);
+       Extensions.melangeGrille(mat,14);
+       affiche(mat);
+       SudokuBase.initGrilleIncomplete(48,mat,mat);
+       System.out.println();
+       affiche(mat);
     }
     public static void affiche(int[][] mat){
         for (int i = 0; i < mat.length; i++) {
@@ -33,7 +31,7 @@ public class test {
 
         return nombreZeros;
     }
-    public static void affiche(boolean[][][] boo){
+    public static void affiche2(boolean[][][] boo){
         for (int i = 0; i < boo.length; i++) {
             for (int j = 0; j < boo[i].length; j++) {
                 TestBis.afficherTabBoolean(boo[i][j]);
