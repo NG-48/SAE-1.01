@@ -3,8 +3,8 @@ public class test {
        int[][] mat=new int[9][9];
        SudokuBase.initGrilleComplete(mat);
        Extensions.melangeGrille(mat,14);
-       affiche(mat);
-       SudokuBase.initGrilleIncomplete(81,mat,mat);
+       SudokuBase.afficheGrille(3,mat);
+       SudokuBase.initGrilleIncomplete(35,mat,mat);
        System.out.println();
        affiche(mat);
     }

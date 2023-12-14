@@ -18,9 +18,11 @@ public class Extensions {
         int nbvaleur;
         for (int tour=0; tour<gOrdi.length-1;tour++){
             nbvaleur = 0;
-            for (int colonne = tour; colonne<gOrdi.length; colonne++ ){
-                if (gOrdi[tour] == gOrdi[colonne]){
-                    nbvaleur++;
+            if(gOrdi[tour]!=0){
+                for (int colonne = tour; colonne<gOrdi.length; colonne++ ){
+                    if (gOrdi[tour] == gOrdi[colonne]){
+                        nbvaleur++;
+                    }
                 }
             }
             if (nbvaleur>1){
@@ -39,9 +41,11 @@ public class Extensions {
         int nbvaleur;
         for (int tour=0; tour<gOrdi.length-1;tour++){
             nbvaleur = 0;
-            for (int ligne = tour; ligne<gOrdi.length; ligne++ ){
-                if (gOrdi[tour][colonne] == gOrdi[ligne][colonne]){
-                    nbvaleur++;
+            if(gOrdi[tour][colonne]!=0){
+                for (int ligne = tour; ligne<gOrdi.length; ligne++ ){
+                    if (gOrdi[tour][colonne] == gOrdi[ligne][colonne]){
+                        nbvaleur++;
+                    }
                 }
             }
             if (nbvaleur>1){
@@ -419,12 +423,14 @@ public class Extensions {
     //.....................................................................
     public static int tourOrdi(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss,int[][] tabTrous) {
         int malus = 0;
-        int[] coor;
+        int[] coor, coor2;
         coor = rechercheTrou(gOrdi,tabTrous);
         int ligne = coor[0];
         int colonne = coor[1];
         System.out.println("\nc'est le tour de l'ordinateur!");
-
+        coor2=SudokuBase.chercheTrou(gOrdi,nbValPoss);
+        System.out.println(nbValPoss[ligne][colonne]);
+        System.out.println(nbValPoss[coor2[0]][coor2[1]]);
 
         if (nbValPoss[ligne][colonne] == 1 || nbValPoss[ligne][colonne]==2 || nbValPoss[ligne][colonne]==3) {
             boolean doitTrouver = true;
@@ -471,7 +477,7 @@ public class Extensions {
 
     public static boolean confirmationValeur(int[] coor, int valeur){
         System.out.println("l'ordinateur veut jouer la valeur "+valeur+" aux coordonée suivantes : "+(coor[0]+1)+" "+(coor[1]+1));
-        System.out.println("si la valeur proposer est correcte veuillez saisir 0 sinon saisir 1");
+        System.out.println("si la valeur proposer est correcte veuillez saisir 0 sinon saissisez 1");
         return SudokuBase.saisirEntierMinMax(0, 1) == 0;
     }
     //.....................................................................
@@ -484,23 +490,22 @@ public class Extensions {
     public static void empiler(int[][] tabTrous, int x, int y){
         tabTrous[0][0]++;
         int card=tabTrous[0][0];
-        tabTrous[card-1][0]=x;
-        tabTrous[card-1][1]=y;
+        tabTrous[card][0]=x;
+        tabTrous[card][1]=y;
     }
 
     public static int[] depiler(int[][] tabTrous){
         int card=tabTrous[0][0];
         int[] coor=new int[2];
-        coor[0]=tabTrous[card-1][0];
-        coor[1]=tabTrous[card-1][1];
+        coor[0]=tabTrous[card][0];
+        coor[1]=tabTrous[card][1];
         tabTrous[0][0]--;
-        tabTrous[card-1][0]=0;
-        tabTrous[card-1][1]=0;
+        tabTrous[card][0]=0;
+        tabTrous[card][1]=0;
         return coor;
     }
 
     public static void initTrous(int[][] gOrdi, int[][] nbValPoss, int[][] tabTrous){
-        int[] coor=new int[2];
         for(int ligne=0;ligne<9;ligne++){
             for(int colonne=0;colonne<9;colonne++){
                 if(gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
@@ -529,7 +534,18 @@ public class Extensions {
         }
         return coor;
     }
-    
+/*
+ * fonction qui ajoute les trous en regardant si il y est déja ou pas
+ */
+    public static void ajoutTrous(int ligne, int colonne,int[][] tabTrous){
+        boolean estPrésent=false;
+        for(int i=1; i<=tabTrous[0][0] && !estPrésent;i++){
+            if(tabTrous[i][0]==ligne && tabTrous[i][1]==colonne){
+                estPrésent =true;
+            }
+        }
+        if(!estPrésent) empiler(tabTrous,ligne,colonne);
+    }
 
     //.....................................................................
     //          fin extension 3.3
@@ -552,7 +568,7 @@ public class Extensions {
     }
 
     public static boolean memeValeur(int[] coor1,int[] coor2,int[][] nbvalPoss, boolean[][][] valPossibles){
-        if((nbvalPoss[coor1[0]][coor1[1]]==nbvalPoss[coor2[0]][coor2[1]]) && (indiceValeur(valPossibles[coor1[0]][coor[1]]))==indiceValeur(valPossibles[coor2[0]][coor2[1]])){
+        if((nbvalPoss[coor1[0]][coor1[1]]==nbvalPoss[coor2[0]][coor2[1]]) && (indiceValeur(valPossibles[coor1[0]][coor1[1]]))==indiceValeur(valPossibles[coor2[0]][coor2[1]])){
             return true;
         }
         else{
@@ -560,12 +576,12 @@ public class Extensions {
         }
     }
 
-    public static void elimineValeur(int[][] gOrdi, int[][] nbvalPoss,boolean[][][] valPossibles){
+    /*public static void elimineValeur(int[][] gOrdi, int[][] nbvalPoss,boolean[][][] valPossibles){
         int ligne=0;
         while(ligne<9){
             for(int colonne1=0; colonne1<9;colonne1++){
                 for(int colonne2=0;colonne2<9;colonne2++){
-                    if(memeValeur(gOrdi[ligne][colonne1]),gOrdi[ligne][colonne2],nbvalPoss,valPossibles){
+                    if(memeValeur(gOrdi[ligne][colonne1],gOrdi[ligne][colonne2],nbvalPoss,valPossibles)){
                         for(int i=0;i<9;i++){
                             supprime
                         }
@@ -574,7 +590,7 @@ public class Extensions {
             }
         }
             ligne++;
-    }
+    }*/
 
     //.....................................................................
     //          fin extension 3.7
@@ -591,12 +607,13 @@ public class Extensions {
         SudokuBase.initGrilleComplete(gSecret);
         melangeGrille(gSecret,14);
         int nbTrous = partieFacile(gSecret,gHumain);
-        initTrous(gHumain,nbValPoss,tabTrous);
+
         System.out.println("veuillez saisir le nom de votre fichier contenant votre grille");
         String fic = Ut.saisirChaine();
 
         saisirGrilleIncompleteFichier(nbTrous, gOrdi,fic);
         SudokuBase.initPossibles(gOrdi, valPossibles, nbValPoss);
+        initTrous(gOrdi,nbValPoss,tabTrous);
 
         return nbTrous;
     } // fin initPartie
@@ -636,7 +653,7 @@ public class Extensions {
             if (SudokuBase.supprime(valPossibles[i][colonne], gOrdi[i][j])) {
                 nbValPoss[i][colonne]--;
                 if(gOrdi[i][colonne]==0 && nbValPoss[i][colonne]==1){
-                    empiler(tabTrous,i,colonne);
+                    ajoutTrous(i,colonne,tabTrous);
                 }
             }
         }
@@ -644,7 +661,7 @@ public class Extensions {
             if (SudokuBase.supprime(valPossibles[ligne][j], gOrdi[i][j])) {
                 nbValPoss[ligne][j]--;
                 if(gOrdi[ligne][j]==0 && nbValPoss[ligne][j]==1){
-                    empiler(tabTrous,ligne,j);
+                    ajoutTrous(ligne,j,tabTrous);
                 }
             }
         }
@@ -656,7 +673,7 @@ public class Extensions {
                 if (SudokuBase.supprime(valPossibles[ligne][colonne], gOrdi[i][j])) {
                     nbValPoss[ligne][colonne]--;
                     if(gOrdi[ligne][colonne]==0 && nbValPoss[ligne][colonne]==1){
-                        empiler(tabTrous,ligne,colonne);
+                        ajoutTrous(ligne,colonne,tabTrous);
                     }
                 }
             }

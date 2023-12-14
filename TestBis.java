@@ -84,16 +84,55 @@ public class TestBis {
             return 2;
         }
     }  // fin partie
+
+
+    public static int tourOrdi(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss,int[][] tabTrous) {
+        int malus = 0;
+        int[] coor;
+        coor = Extensions.rechercheTrou(gOrdi, tabTrous);
+        int ligne = coor[0];
+        int colonne = coor[1];
+        System.out.println("\nc'est le tour de l'ordinateur!");
+
+        if (gOrdi[ligne][colonne] == 0 && nbValPoss[ligne][colonne] == 1) {
+
+            gOrdi[ligne][colonne] = SudokuBase.uneValeur(valPossibles[ligne][colonne]);
+            Ut.afficherSL("l'ordinateur met " + gOrdi[ligne][colonne] + " aux coordonnées suivante : " + (ligne + 1) + " " + (colonne + 1) + "\nvoici sa grille après avoir jouée");
+            SudokuBase.afficheGrille(3, gOrdi);
+        } else {
+            Ut.afficherSL("J'utilise un joker");
+            Ut.afficherSL("Donne moi le résultat pour le point de coordonnées " + (ligne + 1) + " " + (colonne + 1));
+            int reponse = SudokuBase.saisirEntierMinMax(1, 9);
+            gOrdi[ligne][colonne] = reponse;
+            malus++;
+            Ut.afficherSL("l'ordinateur met " + reponse + " aux coordonnées suivante : " + (ligne + 1) + " " + (colonne + 1) + "\nvoici sa grille après avoir jouée");
+            SudokuBase.afficheGrille(3, gOrdi);
+        }
+        Extensions.suppValPoss(gOrdi, ligne, colonne, valPossibles, nbValPoss,tabTrous);
+        return malus;
+    } // fin tourOrdinateur
+
+
+
     public static void main(String[] args) {
-        int gagnant=partie_bis_Auto();
-        if (gagnant==0){
-            Ut.afficherSL("\nC'est un match nul !");
+        int[][] gOrdi=new int[9][9], nbValposs=new int[9][9], tabTrous = new int[82][2];
+        boolean[][][] valposs=new boolean[9][9][10];
+        int nbTrous, compteur=0;
+
+        while (true){
+            SudokuBase.initGrilleComplete(gOrdi);
+            Extensions.melangeGrille(gOrdi,14);
+            nbTrous = Extensions.grilleFacile(gOrdi);
+            SudokuBase.initPossibles(gOrdi, valposs, nbValposs);
+            Extensions.initTrous(gOrdi,nbValposs,tabTrous);
+            for (;nbTrous>0;nbTrous--){
+                tourOrdi(gOrdi,valposs,nbValposs,tabTrous);
+            }
+            compteur++;
+            System.out.println();
+            System.err.println("le nombre de test est de : "+compteur);
+            System.out.println();
         }
-        else if(gagnant==1){
-            Ut.afficherSL("\nLe gagnant est le joueur humain !");
-        }
-        else{
-            Ut.afficherSL("\nLe gagnant est l'ordinateur !");
-        }
+
     }
 }
