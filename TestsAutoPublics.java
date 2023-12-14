@@ -1,7 +1,7 @@
 
-// Placer ce fichier dans le meme dossier que SudokuBase.java et les autres .java, et lancer le main de ce fichier : javac *.java ; java TestsAutoPublics
+// Placer ce fichier dans le même dossier que SudokuBase.java et les autres .java, et lancer le main de ce fichier : javac *.java ; java TestsAutoPublics
 
-// Date : 7/12/2023
+// Date : 10/12/2023
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +32,12 @@ public class TestsAutoPublics {
         note += runTest(TestsAutoPublics::testDebCarre, "testDebCarre",1);
         note += runTest(TestsAutoPublics::testInitGrilleComplete, "testInitGrilleComplete",1);
         note += runTest(TestsAutoPublics::testInitGrilleIncomplete, "testInitGrilleIncomplete",1);
+
+        note += runTest(TestsAutoPublics::testInitPleines, "testInitPleines",1);
+        note += runTest(TestsAutoPublics::testSuppValPoss, "testSuppValPoss",1);
+        note += runTest(TestsAutoPublics::testInitPossibles, "testInitPossibles",1);
+        note += runTest(TestsAutoPublics::testChercheTrou1, "testChercheTrou1",1);
+        // note += runTest(TestsAutoPublics::testChercheTrou2, "testChercheTrou2",1);
 
         System.out.println("fin des tests : note = " + note);
 
@@ -152,5 +158,128 @@ public class TestsAutoPublics {
             return 0;
     }
 
-} // end class
+    //.................................................
 
+    private static double testInitPleines() {
+
+        int [][] gOrdi = { {1,2,3,4,5,6,0,0,0},
+                {4,5,6,7,8,9,0,0,0},
+                {7,8,9,1,2,3,0,0,0},
+                {2,3,4,5,6,7,0,0,0},
+                {5,6,7,8,9,1,0,0,0},
+                {8,9,1,2,3,4,0,0,0},
+                {0,0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0,0} };
+
+        boolean[][][] valPossibles = new  boolean[9][9][10];
+        int [][] nbValPoss = new int[9][9];
+        SudokuBase.initPleines(gOrdi, valPossibles, nbValPoss);
+
+        if(!valPossibles[0][6][3] | nbValPoss[0][6] != 9)
+            return 0;
+
+        if(!valPossibles[8][8][9] | nbValPoss[8][8] != 9)
+            return 0;
+
+        return 1;
+    }
+
+//.................................................
+
+
+    private static double testSuppValPoss() {
+
+        int [][] gOrdi = new int[9][9];
+        boolean[][][] valPossibles = new  boolean[9][9][10];
+        int [][] nbValPoss = new int[9][9];
+
+        for(int i=0;i<9;i++)
+            for(int j=0;j<9;j++){
+                gOrdi[i][j]=0;
+                valPossibles[i][j][8] = true;
+                nbValPoss[i][j] = 1;
+            }
+
+        gOrdi[1][4] = 8;
+
+        SudokuBase.suppValPoss(gOrdi,1,4,valPossibles, nbValPoss);
+
+        if ( valPossibles[1][7][8]  | nbValPoss[1][7] != 0 |
+                valPossibles[5][4][8]  | nbValPoss[5][4] != 0 |
+                valPossibles[2][5][8]  | nbValPoss[2][5] != 0 )
+            return 0;
+
+        if ( !valPossibles[0][6][8]  | nbValPoss[0][6] != 1 |
+                !valPossibles[3][5][8]  | nbValPoss[3][5] != 1 |
+                !valPossibles[8][8][8]  | nbValPoss[8][8] != 1 )
+            return 0;
+
+        return 1;
+    }
+
+//.................................................
+
+    private static double testInitPossibles() {
+
+
+        int [][] gOrdi = new int[9][9];
+        boolean[][][] valPossibles = new  boolean[9][9][10];
+        int [][] nbValPoss = new int[9][9];
+
+        for(int i=0;i<9;i++)
+            for(int j=0;j<9;j++)
+                gOrdi[i][j]=0;
+
+        gOrdi[1][4]=8;
+
+        SudokuBase.initPossibles(gOrdi,valPossibles, nbValPoss);
+
+
+        if(valPossibles[1][7][8]  | nbValPoss[1][7] !=8 |
+                valPossibles[5][4][8]  | nbValPoss[5][4] !=8 |
+                valPossibles[2][5][8]  | nbValPoss[2][5] !=8 )
+            return 0;
+
+        if(!valPossibles[0][6][8]  | nbValPoss[0][6] !=9 |
+                !valPossibles[3][5][8]  | nbValPoss[3][5] !=9 |
+                !valPossibles[8][8][8]  | nbValPoss[8][8] !=9)
+            return 0;
+
+        return 1;
+    }
+//.................................................
+
+    private static double testChercheTrou1() {
+
+        int [][] gOrdi = { {1,2,3,4,5,6,0,0,0},
+                {4,5,6,7,8,9,0,0,0},
+                {7,8,9,1,2,3,0,0,0},
+                {2,3,4,5,6,7,0,0,0},
+                {5,6,7,8,9,1,0,0,0},
+                {8,9,1,2,3,4,0,0,0},
+                {0,0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0,0} };
+
+        int [][] nbValPoss = new int[9][9];
+
+        for(int i=0;i<9;i++)
+            for(int j=0;j<9;j++)
+                nbValPoss[i][j] = 9;
+
+        nbValPoss[6][4] = 1;
+        nbValPoss[6][5] = 1;
+
+        int[] t = SudokuBase.chercheTrou(gOrdi,nbValPoss);
+
+        if (t[0] !=6 || t[1] != 4)
+            return 0;
+
+        return 1;
+    }
+
+//.................................................
+
+
+} // end class
