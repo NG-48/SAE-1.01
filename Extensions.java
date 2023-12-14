@@ -534,6 +534,52 @@ public class Extensions {
     //.....................................................................
     //          fin extension 3.3
     //.....................................................................
+
+    //.....................................................................
+    //          Début extension 3.7
+    //.....................................................................
+
+    public static int[] indiceValeur(boolean[] tab){
+        int[] valeur=new int[10];
+        int card=0;
+        for(int i=1;i<10;i++){
+            if(tab[i]==true){
+                valeur[card]=i;
+                card++;
+            }
+        }
+        return valeur;
+    }
+
+    public static boolean memeValeur(int[] coor1,int[] coor2,int[][] nbvalPoss, boolean[][][] valPossibles){
+        if((nbvalPoss[coor1[0]][coor1[1]]==nbvalPoss[coor2[0]][coor2[1]]) && (indiceValeur(valPossibles[coor1[0]][coor[1]]))==indiceValeur(valPossibles[coor2[0]][coor2[1]])){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public static void elimineValeur(int[][] gOrdi, int[][] nbvalPoss,boolean[][][] valPossibles){
+        int ligne=0;
+        while(ligne<9){
+            for(int colonne1=0; colonne1<9;colonne1++){
+                for(int colonne2=0;colonne2<9;colonne2++){
+                    if(memeValeur(gOrdi[ligne][colonne1]),gOrdi[ligne][colonne2],nbvalPoss,valPossibles){
+                        for(int i=0;i<9;i++){
+                            supprime
+                        }
+                    }
+                }
+            }
+        }
+            ligne++;
+    }
+
+    //.....................................................................
+    //          fin extension 3.7
+    //.....................................................................
+    
     //.....................................................................
     //          fonction générales
     //.....................................................................
