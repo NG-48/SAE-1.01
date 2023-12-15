@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
+import java.util.Arrays
 
 public class Extensions {
 
@@ -754,6 +755,7 @@ public class Extensions {
         saisirGrilleIncompleteFichier(nbTrous, gOrdi,fic);
         SudokuBase.initPossibles(gOrdi, valPossibles, nbValPoss);
         initTrous(gOrdi,nbValPoss,tabTrous);
+    
 
         return nbTrous;
     } // fin initPartie
