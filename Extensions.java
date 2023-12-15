@@ -279,13 +279,7 @@ public class Extensions {
         int[][] mat= new int[9][9], nbValPoss=new int[9][9];
 
         SudokuBase.copieMatrice(grille,mat);
-        SudokuBase.afficheGrille(3,grille);
-        test.affiche(nbValPoss);
-        System.out.println();
-
         initPossible(grille,valPoss,nbValPoss);
-        test.affiche2(valPoss);
-        test.affiche(nbValPoss);
         SudokuBase.initGrilleIncomplete(nbTrous,mat,grille);
 
 
@@ -302,10 +296,6 @@ public class Extensions {
             }
 
         }while (aTrouver);
-        System.out.println();
-        test.affiche(nbValPoss);
-        System.out.println("grille finale");
-        test.affiche(grille);
         return nbTrous;
     }
 
@@ -421,17 +411,15 @@ public class Extensions {
     //.....................................................................
     //          Début extension 3.1
     //.....................................................................
-    public static int tourOrdi(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss,int[][] tabTrous) {
+    public static int tourOrdi(int[][] gOrdi, boolean[][][] valPossibles, int[][] nbValPoss,int[][] tabTrous,int nbTrous) {
         int malus = 0;
-        int[] coor, coor2;
+        int[] coor;
         coor = rechercheTrou(gOrdi,tabTrous);
         int ligne = coor[0];
         int colonne = coor[1];
         System.out.println("\nc'est le tour de l'ordinateur!");
-        coor2=SudokuBase.chercheTrou(gOrdi,nbValPoss);
-        System.out.println(nbValPoss[ligne][colonne]);
-        System.out.println(nbValPoss[coor2[0]][coor2[1]]);
-
+        if(nbValPoss[ligne][colonne]!=1) testValeursImpossibles(nbTrous,coor,gOrdi,valPossibles,nbValPoss,tabTrous);
+        
         if (nbValPoss[ligne][colonne] == 1 || nbValPoss[ligne][colonne]==2 || nbValPoss[ligne][colonne]==3) {
             boolean doitTrouver = true;
             do {
@@ -595,6 +583,75 @@ public class Extensions {
     //.....................................................................
     //          fin extension 3.7
     //.....................................................................
+    //.....................................................................
+    //          extention 3.8
+    //.....................................................................
+        /*
+         * action : applique la consigne de l'extention 3.8 en mettant a jour valPossibles et nbValPoss si nécessaire
+         */
+        public static void testValeursImpossibles(int nbTrous,int[]coor,int[][] gOrdi,boolean[][][] valPossibles, int[][] nbValPossibles,int[][] tabTrous){
+            int[][] nbVal= new int[9][9], grille=new int[9][9], posiTrous=new int[82][2];
+            boolean[][][] valPoss= new boolean[9][9][10];
+            int[] loc;
+            int ligne=coor[0], colonne=coor[1];
+            boolean problemeSurvenue=false;
+            for(int val=1; valPossibles[ligne][colonne][val];val++){
+                copieGrilleValeurs(gOrdi,valPossibles,nbValPossibles,tabTrous,grille,valPoss,nbVal,posiTrous);
+                retireValeursPossibles(valPoss[ligne][colonne],val);
+                grille[ligne][colonne] = val;
+                suppValPoss(grille,ligne,colonne,valPoss,nbVal,posiTrous);
+                for(int trous=nbTrous-1; trous>0 && !problemeSurvenue;trous--){
+                    loc=rechercheTrou(grille,posiTrous);
+                    if(nbVal[loc[0]][loc[1]]!=1){
+                        problemeSurvenue=true;
+                        if(chercheNbValeurZero(grille,nbVal)){
+                            valPossibles[ligne][colonne][val]=false;
+                            nbValPossibles[ligne][colonne]--;
+                        }
+                    }else{
+                        grille[loc[0]][loc[1]]=SudokuBase.uneValeur(valPoss[loc[0]][loc[1]]);
+                        suppValPoss(grille,loc[0],loc[1],valPoss,nbVal,posiTrous);
+                    }
+                }
+            }
+
+
+        }
+
+        // action copie les valeurs des 4 premiers args dans les 4 derniers
+        public static void copieGrilleValeurs(int[][] gOrdi,boolean[][][] valPossibles, int[][] nbValPossibles,int[][] tabTrous,
+                                              int[][] grille,boolean[][][] valPoss,int[][] nbVal,int[][] posiTrous){
+            SudokuBase.copieMatrice(gOrdi,grille);
+            SudokuBase.copieMatrice(nbValPossibles,nbVal);
+            SudokuBase.copieMatrice(tabTrous,posiTrous);
+            for (int i =0; i<valPossibles.length;i++){
+                for (int j =0; j<valPossibles[i].length;j++){
+                    for(int rang=0; rang<valPossibles[i][j].length;rang++){
+                        valPoss[i][j][rang]=valPossibles[i][j][rang];
+                    }
+                }
+            }
+
+        }
+        // met toutes les valeurs de tab à false exceptée val
+        public static void retireValeursPossibles(boolean[] tab,int val){
+            for(int i=0; i<tab.length;i++){
+                if(i!=val) tab[i]=false;
+            }
+        }
+        // cherche dans grille si il y a un trou avec 0 valeur possibles, renvoie true si oui
+        public static boolean chercheNbValeurZero(int[][]grille, int[][]nbValPoss){
+            for(int ligne=0; ligne<grille.length; ligne++){
+                for (int colonne=0 ; colonne<grille[ligne].length; colonne++){
+                    if(grille[ligne][colonne]==0 && nbValPoss[ligne][colonne]==0) return true;
+                }
+            }
+            return false;
+        }
+
+    //.....................................................................
+    //          fin extension 3.8
+    //.....................................................................
     
     //.....................................................................
     //          fonction générales
@@ -634,7 +691,7 @@ public class Extensions {
             pointHumain += SudokuBase.tourHumain(gSecret, gHumain);
             System.out.println("Voici le nombre de point que vous possédez : " + pointHumain);
 
-            pointOrdi += tourOrdi(gOrdi, valPossibles, nbValPoss,tabTrous);
+            pointOrdi += tourOrdi(gOrdi, valPossibles, nbValPoss,tabTrous,nbTrous);
             System.out.println("Voici le nombre de point que l'ordinateur possède : " + pointOrdi);
 
         }

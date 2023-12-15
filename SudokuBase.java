@@ -418,15 +418,10 @@ public class SudokuBase {
 
         System.out.println("veuillez saisir le nom de votre fichier contenant votre grille");
         String fic = Ut.saisirChaine();
-        System.out.println("1");
         initGrilleComplete(gSecret); /* Met dans gSecret une grille de Sudoku complète */
-        System.out.println("1");
         initGrilleIncomplete(nbTrous,gSecret,gHumain);
-        System.out.println("1");
         saisirGrilleIncompleteFichier(nbTrous, gOrdi,fic);
-        System.out.println("1");
         initPossibles(gOrdi, valPossibles, nbValPoss);
-        System.out.println("1");
 
         return nbTrous;
     } // fin initPartie
@@ -452,7 +447,7 @@ public class SudokuBase {
         System.out.println("veuillez choisir la colonne du trou que vous souhaitez remplir");
         int colonne = saisirEntierMinMax(1, 9) - 1;
         while (gHumain[ligne][colonne] != 0) {
-            System.err.println("l'emplacement selectionnée n'est pas un trou! veuillez choisir un nouveau emplacement");
+            System.out.println("l'emplacement selectionnée n'est pas un trou! veuillez choisir un nouveau emplacement");
             System.out.println("veuillez choisir la ligne du trou que vous souhaitez remplir");
             ligne = saisirEntierMinMax(1, 9) - 1;
             System.out.println("veuillez choisir la colonne du trou que vous souhaitez remplir");
