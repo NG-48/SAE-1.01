@@ -755,6 +755,9 @@ public class Extensions {
         saisirGrilleIncompleteFichier(nbTrous, gOrdi,fic);
         SudokuBase.initPossibles(gOrdi, valPossibles, nbValPoss);
         initTrous(gOrdi,nbValPoss,tabTrous);
+        enleveValeurCarre(gOrdi,3,valPossibles,nbValPoss);
+        enleveValeurColonne(valPossibles);
+        enleveValeurLigne(valPossibles);
     
 
         return nbTrous;
