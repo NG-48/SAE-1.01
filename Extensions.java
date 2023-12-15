@@ -543,48 +543,131 @@ public class Extensions {
     //          Début extension 3.7
     //.....................................................................
 
-    public static int[] indiceValeur(boolean[] tab){
-        int[] valeur=new int[10];
+    //c'est la fonction debCarre de SudokuBase
+    public static int[] debCarre(int k, int i, int j) {
+        int[] tab = new int[2];
+        tab[0] = i - i % k;
+        tab[1] = j - j % k;
+        return tab;
+    }
+
+    //Cette fonction va mettre à false les valeurs qui ne sont plus possibles pour les autres trous ( valeur étant un tableau qui contient les indices qui faut mettre à false)
+    public static void supprime(int i, int j, boolean[][][] valPossibles, int[] valeur) {
+        for(int n=0;n<10;n++){
+            if(valeur[n]>0){
+                valPossibles[i][j][valeur[n]]=false;
+            }
+        }
+    }
+
+    //Cette fonction va chercher dans un carre de taille k si y'a la même pair entre deux trous et la supprimer pour les autres trous du carre
+    public static void enleveValeurCarre(int[][] gOrdi, int k, boolean[][][] valPossibles,int[][] nbValPoss) { //on peut enlever le k ici
+        int[] coor = new int[2];
+        int[] tab = new int[2];
+        int[] valeur2=new int[10];
+        tab = SudokuBase.chercheTrou(gOrdi,nbValPoss);
+        int ligne = tab[0];
+        int colonne = tab[1];
+        coor = debCarre(k, ligne, colonne);// on peut enlever le k de la fonction et le remplacer par 3 pour un Sudoku
+        for (int ligne1 = coor[0]; ligne1 < coor[0] + k-1; ligne1++) {
+            for (int ligne2 = coor[0]; ligne2 < coor[0] + k-1; ligne2++) {
+                for (int colonne1 = coor[1]; colonne1 < coor[1] + k-1; colonne1++) {
+                    for (int colonne2 = coor[1]; colonne2 < coor[1] + k-1; colonne2++) {
+                        if (memeValeur(ligne1, ligne2, colonne1, colonne2,valPossibles)) {
+                            int[] valeur = indiceValeur(valPossibles[ligne1][colonne1], valPossibles[ligne2][colonne2]);
+                            for (int i = coor[0]; i < coor[0] + k-1; i++) {
+                                for (int j = coor[1]; j < coor[1] + k-1; j++) {
+                                    valeur2=indiceValeur(valPossibles[i][j],valPossibles[i][j]);
+                                    if ((Arrays.equals(valeur2, valeur)) && (i != ligne1) && (i != ligne2) && (j != colonne1) && j != colonne2) {
+                                        supprime(i, j, valPossibles, valeur);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //Cette fonction va chercher dans les colonnes d'une ligne si il y a la même pair pour deux trous et la supprimer pour les autres trous de la colonne
+    public static void enleveValeurColonne(boolean[][][] valPossibles) {
+        int ligne = 0;
+        int[] valeur = new int[10];
+        int[] valeur2=new int[10];
+        while (ligne < 9) {
+            for (int colonne1 = 0; colonne1 < 9; colonne1++) {
+                for (int colonne2 = 0; colonne2 < 9; colonne2++) {
+                    if (memeValeur(ligne, ligne, colonne1, colonne2,valPossibles)) {
+                        valeur = indiceValeur(valPossibles[ligne][colonne1], valPossibles[ligne][colonne2]);
+                    }
+                    for (int i = 0; i < 9; i++) {
+                        valeur2=indiceValeur(valPossibles[ligne][i],valPossibles[ligne][i]);
+                        if ((Arrays.equals(valeur2, valeur)) && (i != colonne1) && (i != colonne2)) {
+                            supprime(ligne, i, valPossibles, valeur);
+                        }
+                    }
+                }
+            }
+            ligne++;
+        }
+    }
+
+    //Cette fonction fait la même chose que la précédente mais avec les lignes
+    public static void enleveValeurLigne(boolean[][][] valPossibles) {
+        int colonne = 0;
+        int[] valeur = new int[10];
+        int[] valeur2=new int[10];
+        while (colonne<9) {
+            for (int ligne1 = 0; ligne1 < 9; ligne1++) {
+                for (int ligne2 = 0; ligne2 < 9; ligne2++) {
+                    if (memeValeur(ligne1, ligne2, colonne, colonne, valPossibles)) {
+                        valeur = indiceValeur(valPossibles[ligne1][colonne], valPossibles[ligne2][colonne]);
+                    }
+                    for (int i = 0; i < 9; i++) {
+                        valeur2=indiceValeur(valPossibles[i][colonne],valPossibles[i][colonne]);
+                        if ((Arrays.equals(valeur2, valeur)) && (i != ligne1) && (i != ligne2)) {
+                            supprime(i, colonne, valPossibles, valeur);
+                        }
+                    }
+                }
+            }
+            colonne++;
+        }
+    }
+
+    //Cette fonction va retourner un tableau avec les indices lorsque les tableaux en paramètre ont la même pair
+    public static int[] indiceValeur(boolean[] tab1, boolean[] tab2) {
+        int[] valeur = new int[10];
         int card=0;
-        for(int i=1;i<10;i++){
-            if(tab[i]==true){
-                valeur[card]=i;
+        for (int i = 0; i < 10; i++) {
+            if (tab1[i] == true && tab2[i] == true) {
+                valeur[card] = i;
                 card++;
             }
         }
         return valeur;
     }
 
-    public static boolean memeValeur(int[] coor1,int[] coor2,int[][] nbvalPoss, boolean[][][] valPossibles){
-        if((nbvalPoss[coor1[0]][coor1[1]]==nbvalPoss[coor2[0]][coor2[1]]) && (indiceValeur(valPossibles[coor1[0]][coor1[1]]))==indiceValeur(valPossibles[coor2[0]][coor2[1]])){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-    /*public static void elimineValeur(int[][] gOrdi, int[][] nbvalPoss,boolean[][][] valPossibles){
-        int ligne=0;
-        while(ligne<9){
-            for(int colonne1=0; colonne1<9;colonne1++){
-                for(int colonne2=0;colonne2<9;colonne2++){
-                    if(memeValeur(gOrdi[ligne][colonne1],gOrdi[ligne][colonne2],nbvalPoss,valPossibles)){
-                        for(int i=0;i<9;i++){
-                            supprime
-                        }
-                    }
-                }
+    //Cette fonction va retourner un booléen pour savoir si deux trous ont les mêmes valeurs possibles
+    public static boolean memeValeur(int x1, int x2, int j1, int j2,boolean[][][] valPossibles) {
+        int[] valeur = new int[10];
+        valeur = indiceValeur(valPossibles[x1][j1],valPossibles[x2][j2]);
+        for (int i = 0; i < 10; i++) {
+            if(valeur[i]!=0 && valeur[i+1]!=0){
+                return true;
             }
         }
-            ligne++;
-    }*/
+        return false;
+    }
+
 
     //.....................................................................
     //          fin extension 3.7
     //.....................................................................
+    
     //.....................................................................
-    //          extention 3.8
+    //          extension 3.8
     //.....................................................................
         /*
          * action : applique la consigne de l'extention 3.8 en mettant a jour valPossibles et nbValPoss si nécessaire
